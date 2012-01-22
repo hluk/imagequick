@@ -3,18 +3,26 @@ import QtQuick 1.1
 
 Item {
     id: item
-    visible: !hidden
 
     property string path: filePath
     property bool hidden: !isMatched(fileName, filter)
     property bool loaded: image.status === Image.Ready
 
-    width:  hidden ? 0 : (one || !horizontal) ?
+    opacity: hidden ? 0.0 : 1.0
+
+    width:  opacity * ( (one || !horizontal) ?
                 Math.max(view.width, image.width, label.width) :
-                Math.max(image.width, label.width)
-    height: hidden ? 0 : (one || horizontal) ?
+                Math.max(image.width, label.width) )
+    height: opacity * ( (one || horizontal) ?
                 Math.max(view.height, image.height, label.height) :
-                Math.max(image.height, label.height)
+                Math.max(image.height, label.height) )
+
+    Behavior on opacity {
+        NumberAnimation {
+            duration: show_duration
+            onCompleted: visible = hidden === 0.0
+        }
+    }
 
     MouseArea {
         anchors.fill: parent
@@ -27,17 +35,17 @@ Item {
         }
     }
 
-    Image {
+    AnimatedImage {
         id: image
         source: hidden ? "" : filePath
         anchors.centerIn: parent
 
         property real izoom: 1.0
 
-        width:  image.status === Image.Ready ?
+        width:  status === Image.Ready ?
                     (implicitWidth * izoom * zoom) :
                     0
-        height: image.status === Image.Ready ?
+        height: status === Image.Ready ?
                     (implicitHeight * izoom * zoom) :
                     0
         fillMode: Image.PreserveAspectFit

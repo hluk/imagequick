@@ -37,7 +37,7 @@ Scrollable {
         var i = currentIndex;
         while(currentIndex+1 < count) {
             incrementCurrentIndex();
-            if (currentItem.visible)
+            if (!currentItem.hidden)
                 return;
         }
         currentIndex = i;
@@ -48,7 +48,7 @@ Scrollable {
         var i = currentIndex;
         while(currentIndex > 0) {
             decrementCurrentIndex()
-            if (currentItem.visible)
+            if (!currentItem.hidden)
                 return;
         }
         currentIndex = i;

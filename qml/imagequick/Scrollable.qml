@@ -5,6 +5,8 @@ ListView {
     id: view
 
     orientation: horizontal ? ListView.Horizontal : ListView.Vertical
+    highlightResizeDuration: scroll_duration
+    highlightMoveDuration: scroll_duration
 
     function scroll(x, y) {
         var err, end, scroll;
@@ -14,6 +16,7 @@ ListView {
             if ( horizontal && (atXBeginning || scroll < currentItem.x) ) {
                 previous();
                 contentY = 0;
+                positionViewAtIndex(currentIndex, ListView.Contain);
             } else if (scroll > 0) {
                 contentX = Math.max(0, contentX+x)
             }

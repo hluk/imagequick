@@ -7,12 +7,14 @@ Rectangle {
     color: "black"
     focus: true
 
-    property string src: "/home/lukas/Pictures"
     property bool horizontal: true
     property string filter: ""
+
     property int scroll_duration: 100
     property int zoom_duration: 250
     property int show_duration: 300
+
+    property int scroll_amount: 200
 
     function toggle(dest, arg1, arg2) {
         dest = (dest === arg1) ? arg2 : arg1;
@@ -69,7 +71,7 @@ Rectangle {
 
         event.accepted = true;
 
-        if (ctrl && k === Qt.Key_F ) {
+        if ( k === Qt.Key_Apostrophe || (ctrl && k === Qt.Key_F) ) {
             search();
         } else if (k === Qt.Key_H) {
             view.zoom = 1.0;
@@ -88,21 +90,21 @@ Rectangle {
         } else if (k === Qt.Key_Enter || k === Qt.Key_Return) {
             view.forward()
         } else if (k === Qt.Key_Right) {
-            view.scroll(100, 0)
+            view.scroll(scroll_amount, 0)
         } else if (k === Qt.Key_Left) {
-            view.scroll(-100, 0)
+            view.scroll(-scroll_amount, 0)
         } else if (k === Qt.Key_Up) {
-            view.scroll(0, -100)
+            view.scroll(0, -scroll_amount)
         } else if (k === Qt.Key_Down) {
-            view.scroll(0, 100)
+            view.scroll(0, scroll_amount)
         } else if (k === Qt.Key_Home) {
             view.currentIndex = 0;
         } else if (k === Qt.Key_End) {
             view.currentIndex = view.count-1;
         } else if (k === Qt.Key_PageDown) {
-            view.scroll(0, view.height-100)
+            view.scroll(0, view.height-scroll_amount)
         } else if (k === Qt.Key_PageUp) {
-            view.scroll(0, -view.height+100)
+            view.scroll(0, -view.height+scroll_amount)
         } else if (k === Qt.Key_Space) {
             if (horizontal)
                 view.scroll( (shift ? -1 : 1) * (view.width-100), 0 )

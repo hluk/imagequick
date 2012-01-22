@@ -3,13 +3,16 @@ import QtQuick 1.1
 
 Item {
     id: item
+    visible: !hidden
 
     property string path: filePath
+    property bool hidden: !isMatched(fileName, filter)
+    property bool loaded: image.status === Image.Ready
 
-    width:  (one || !horizontal) ?
+    width:  hidden ? 0 : (one || !horizontal) ?
                 Math.max(view.width, image.width, label.width) :
                 Math.max(image.width, label.width)
-    height: (one || horizontal) ?
+    height: hidden ? 0 : (one || horizontal) ?
                 Math.max(view.height, image.height, label.height) :
                 Math.max(image.height, label.height)
 
@@ -26,7 +29,7 @@ Item {
 
     Image {
         id: image
-        source: filePath
+        source: hidden ? "" : filePath
         anchors.centerIn: parent
 
         property real izoom: 1.0
@@ -39,6 +42,13 @@ Item {
                     0
         fillMode: Image.PreserveAspectFit
         smooth: true
+
+        Behavior on izoom {
+            NumberAnimation {
+                duration: 250
+                easing.type: Easing.OutQuad;
+            }
+        }
 
         /* ZOOM */
         states: [

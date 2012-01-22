@@ -9,10 +9,21 @@ Rectangle {
 
     property string src: "/home/lukas/Pictures"
     property bool horizontal: true
+    property string filter: ""
+    property int scroll_duration: 100
+    property int zoom_duration: 250
+    property int show_duration: 300
 
-    function toggle(dest, arg1, arg2)
-    {
+    function toggle(dest, arg1, arg2) {
         dest = (dest === arg1) ? arg2 : arg1;
+    }
+
+    function search() {
+        search_edit.show();
+    }
+
+    function isMatched(fileName, filter) {
+        return fileName.toLowerCase().indexOf(filter) !== -1;
     }
 
     /* main view */
@@ -22,24 +33,52 @@ Rectangle {
         height: page.height
     }
 
+    /* search box */
+    Search {
+        id: search_edit
+        visible: false
+        text: filter
+        onSearch: {
+            filter = text.toLowerCase();
+        }
+        onClosed: {
+            if (view.currentItem.hidden) {
+                view.next();
+                if (view.currentItem.hidden)
+                    view.previous();
+            }
+        }
+    }
+
     /* keyboard */
-    Keys.onBackPressed:   view.back()
+    Keys.onBackPressed: {
+        view.back();
+        event.accepted = true;
+    }
     Keys.onAsteriskPressed: {
         view.zoom = 1.0;
         view.state = "NORMAL";
+        event.accepted = true;
     }
     Keys.onPressed: {
-        var max, k, shift;
+        var k, m, shift, ctrl;
+
         k = event.key;
+        m = event.modifiers;
+        shift = event.modifiers & Qt.ShiftModifier;
+        ctrl  = event.modifiers & Qt.ControlModifier;
+
         event.accepted = true;
 
-        if (k === Qt.Key_H) {
+        if (ctrl && k === Qt.Key_F ) {
+            search();
+        } else if (k === Qt.Key_H) {
             view.zoom = 1.0;
             view.state = "FIT-TO-HEIGHT";
         } else if (k === Qt.Key_J || k === Qt.Key_N) {
-            view.incrementCurrentIndex()
+            view.next()
         } else if (k === Qt.Key_K || k === Qt.Key_B) {
-            view.decrementCurrentIndex()
+            view.previous()
         } else if (k === Qt.Key_O) {
             horizontal = !horizontal
         } else if (k === Qt.Key_Q || k === Qt.Key_Escape) {
@@ -61,12 +100,15 @@ Rectangle {
             view.currentIndex = 0;
         } else if (k === Qt.Key_End) {
             view.currentIndex = view.count-1;
+        } else if (k === Qt.Key_PageDown) {
+            view.scroll(0, view.height-100)
+        } else if (k === Qt.Key_PageUp) {
+            view.scroll(0, -view.height+100)
         } else if (k === Qt.Key_Space) {
-            shift = (event.modifiers & Qt.ShiftModifier) ? -1 : 1;
             if (horizontal)
-                view.scroll( shift * (view.width-100), 0 )
+                view.scroll( (shift ? -1 : 1) * (view.width-100), 0 )
             else
-                view.scroll( 0, shift * (view.height-100) )
+                view.scroll( 0, (shift ? -1 : 1) * (view.height-100) )
         } else if (k === Qt.Key_Plus) {
             view.zoom += 0.125;
         } else if (k === Qt.Key_Minus) {

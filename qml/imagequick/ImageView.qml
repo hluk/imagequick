@@ -1,30 +1,16 @@
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
 import Qt.labs.folderlistmodel 1.0
+import "History.js" as History
 
 Scrollable {
     id: view
 
-    property string history_str: "0"
     property real zoom: 1.0
     property bool one: false
 
-    function pushHistory(item) {
-        history_str += ","+item;
-    }
-
-    function popHistory() {
-        var str, i, last;
-
-        str = history_str.toString();
-        i = str.lastIndexOf(",");
-        last = str.slice(i+1);
-        history_str = str.slice(0,i);
-
-        return last ? parseInt(last) : undefined;
-    }
-
     function back() {
+        /* show multiple items or go to parent folder*/
         if (one)
             one = false;
         else
@@ -32,20 +18,47 @@ Scrollable {
     }
 
     function forward() {
+        /* enter folder or show single image */
         if ( model.isFolder(view.currentIndex) ) {
-            pushHistory(currentIndex);
-            pushHistory(0);
+            History.push(currentIndex);
+            History.push(0);
             model.folder = currentItem.path;
+            filter = "";
         } else {
-            one = !one;
+            if (currentItem.loaded) {
+                one = !one;
+                positionViewAtIndex(currentIndex, ListView.Contain);
+            }
         }
+    }
+
+    function next() {
+        /* focus next visible item */
+        var i = currentIndex;
+        while(currentIndex+1 < count) {
+            incrementCurrentIndex();
+            if (currentItem.visible)
+                return;
+        }
+        currentIndex = i;
+    }
+
+    function previous() {
+        /* focus previous visible item */
+        var i = currentIndex;
+        while(currentIndex > 0) {
+            decrementCurrentIndex()
+            if (currentItem.visible)
+                return;
+        }
+        currentIndex = i;
     }
 
     state: "FIT"
 
     Behavior on zoom {
         NumberAnimation {
-            duration: 250
+            duration: zoom_duration
             easing.type: Easing.OutQuad;
         }
     }
@@ -59,15 +72,15 @@ Scrollable {
     }
 
     delegate: ImageItem {
-        id: image
+        id: item
     }
 
     onCountChanged:  {
-        var current = popHistory();
+        var current = History.pop();
         if (current < count)
             currentIndex = current;
         else
-            pushHistory(current);
+            History.push(current);
     }
 
     onOrientationChanged: {

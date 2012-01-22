@@ -36,7 +36,6 @@ Rectangle {
     /* search box */
     Search {
         id: search_edit
-        visible: false
         text: filter
         onSearch: {
             filter = text.toLowerCase();

@@ -11,7 +11,6 @@ Rectangle {
     border.color: "black"
     border.width: 2
     smooth: true
-    visible: false
     opacity: 0
 
     signal search(string text)
@@ -26,7 +25,6 @@ Rectangle {
     }
 
     function show() {
-        visible = true;
         opacity = 1;
         edit.focus = true;
     }
@@ -35,7 +33,6 @@ Rectangle {
         PropertyAnimation {
             duration: show_duration
             easing.type: Easing.InOutQuad;
-            onCompleted: search_box.visible = opacity === 1
         }
     }
 

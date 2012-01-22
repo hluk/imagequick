@@ -5,17 +5,6 @@ ListView {
     id: view
 
     orientation: horizontal ? ListView.Horizontal : ListView.Vertical
-    //snapMode: ListView.SnapToItem
-
-    highlightMoveDuration: 250
-    highlightResizeDuration: 250
-
-    Behavior on contentX {
-        NumberAnimation {
-            duration: scroll_duration
-            easing.type: Easing.OutQuad;
-        }
-    }
 
     function scroll(x, y) {
         var err, end, scroll;
@@ -62,6 +51,19 @@ ListView {
                                         contentHeight :
                                         currentItem.height-height)
             }
+        }
+    }
+
+    Behavior on contentX {
+        NumberAnimation {
+            duration: scroll_duration
+            easing.type: Easing.OutQuad;
+        }
+    }
+    Behavior on contentY {
+        NumberAnimation {
+            duration: scroll_duration
+            easing.type: Easing.OutQuad;
         }
     }
 }

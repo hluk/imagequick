@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/qml">
+        <file>qml/imagequick/ImageItem.qml</file>
+        <file>qml/imagequick/ImageLabel.qml</file>
+        <file>qml/imagequick/ImageView.qml</file>
+        <file>qml/imagequick/main.qml</file>
+        <file>qml/imagequick/Scrollable.qml</file>
+        <file>qml/imagequick/Search.qml</file>
+        <file>qml/imagequick/History.js</file>
+    </qresource>
+</RCC>

@@ -10,6 +10,13 @@ Rectangle {
     property bool horizontal: true
     property string filter: ""
 
+    /* colors */
+    property color color_current: "yellow"
+    property color color_image: "white"
+    property color color_directory: "#9df"
+    property color color_other: "gray"
+
+    /* animation properties */
     property int scroll_duration: 100
     property int zoom_duration: 250
     property int show_duration: 300
@@ -43,7 +50,7 @@ Rectangle {
             filter = text.toLowerCase();
         }
         onClosed: {
-            if (view.currentItem.hidden) {
+            if (view.currentItem.is_hidden) {
                 view.next();
                 if (view.currentItem.hidden)
                     view.previous();
@@ -99,8 +106,10 @@ Rectangle {
             view.scroll(0, scroll_amount)
         } else if (k === Qt.Key_Home) {
             view.currentIndex = 0;
+            view.positionViewAtBeginning()
         } else if (k === Qt.Key_End) {
             view.currentIndex = view.count-1;
+            view.positionViewAtEnd()
         } else if (k === Qt.Key_PageDown) {
             view.scroll(0, view.height-scroll_amount)
         } else if (k === Qt.Key_PageUp) {

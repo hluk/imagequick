@@ -9,6 +9,10 @@ Scrollable {
     property real zoom: 1.0
     property bool one: false
 
+    function isDir(index) {
+        return model.isFolder(index);
+    }
+
     function back() {
         /* show multiple items or go to parent folder*/
         if (one)
@@ -19,13 +23,13 @@ Scrollable {
 
     function forward() {
         /* enter folder or show single image */
-        if ( model.isFolder(view.currentIndex) ) {
+        if ( currentItem.is_dir ) {
             History.push(currentIndex);
             History.push(0);
             model.folder = currentItem.path;
             filter = "";
         } else {
-            if (currentItem.loaded) {
+            if (currentItem.is_loaded) {
                 one = !one;
                 positionViewAtIndex(currentIndex, ListView.Contain);
             }
@@ -37,7 +41,7 @@ Scrollable {
         var i = currentIndex;
         while(currentIndex+1 < count) {
             incrementCurrentIndex();
-            if (!currentItem.hidden)
+            if (!currentItem.is_hidden)
                 return;
         }
         currentIndex = i;
@@ -48,7 +52,7 @@ Scrollable {
         var i = currentIndex;
         while(currentIndex > 0) {
             decrementCurrentIndex()
-            if (!currentItem.hidden)
+            if (!currentItem.is_hidden)
                 return;
         }
         currentIndex = i;

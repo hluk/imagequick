@@ -37,3 +37,6 @@ include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
 
 HEADERS +=
+
+RESOURCES += \
+    resource.qrc

@@ -5,10 +5,14 @@ Item {
     id: item
 
     property string path: filePath
-    property bool hidden: !isMatched(fileName, filter)
-    property bool loaded: image.status === Image.Ready
+    property string filename: fileName
+    property bool is_dir: isDir(index >= 0 ? index : currentIndex)
+    property bool is_image: image.status !== Image.Error
+    property bool is_loaded: image.status === Image.Ready
+    property bool is_current: ListView.isCurrentItem
+    property bool is_hidden: !isMatched(filename, filter)
 
-    opacity: hidden ? 0.0 : 1.0
+    opacity: is_hidden ? 0.0 : 1.0
 
     width:  opacity * ( (one || !horizontal) ?
                 Math.max(view.width, image.width, label.width) :
@@ -20,7 +24,7 @@ Item {
     Behavior on opacity {
         NumberAnimation {
             duration: show_duration
-            onCompleted: visible = hidden === 0.0
+            onCompleted: visible = is_hidden === 0.0
         }
     }
 
@@ -37,17 +41,13 @@ Item {
 
     AnimatedImage {
         id: image
-        source: hidden ? "" : filePath
+        source: (is_hidden || is_dir) ? "" : path
         anchors.centerIn: parent
 
         property real izoom: 1.0
 
-        width:  status === Image.Ready ?
-                    (implicitWidth * izoom * zoom) :
-                    0
-        height: status === Image.Ready ?
-                    (implicitHeight * izoom * zoom) :
-                    0
+        width:  is_loaded ? (implicitWidth  * izoom * zoom) : 0
+        height: is_loaded ? (implicitHeight * izoom * zoom) : 0
         fillMode: Image.PreserveAspectFit
         smooth: true
 

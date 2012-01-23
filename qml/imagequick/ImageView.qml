@@ -9,7 +9,9 @@ Scrollable {
     property real zoom: 1.0
     property bool one: false
 
-    function isDir(index) {
+    flickableDirection: Flickable.HorizontalAndVerticalFlick
+
+    function isDirectory(index) {
         return model.isFolder(index);
     }
 
@@ -23,7 +25,7 @@ Scrollable {
 
     function forward() {
         /* enter folder or show single image */
-        if ( currentItem.is_dir ) {
+        if ( currentItem.is_directory ) {
             History.push(currentIndex);
             History.push(0);
             model.folder = currentItem.path;

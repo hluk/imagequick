@@ -83,10 +83,10 @@ Rectangle {
         } else if (k === Qt.Key_H) {
             view.zoom = 1.0;
             view.state = "FIT-TO-HEIGHT";
+        } else if ( (shift && k === Qt.Key_N) || k === Qt.Key_K || k === Qt.Key_B ) {
+            view.previous()
         } else if (k === Qt.Key_J || k === Qt.Key_N) {
             view.next()
-        } else if (k === Qt.Key_K || k === Qt.Key_B) {
-            view.previous()
         } else if (k === Qt.Key_O) {
             horizontal = !horizontal
         } else if (k === Qt.Key_Q || k === Qt.Key_Escape) {

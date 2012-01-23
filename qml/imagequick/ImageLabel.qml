@@ -4,7 +4,7 @@ import QtQuick 1.1
 Text {
     visible: !one || image.status !== Image.Ready
     color: is_current ? color_current :
-             is_dir ? color_directory :
+             is_directory ? color_directory :
                is_image ? color_image :
                  color_other
     text: "<strong>"+filename+"</strong>"+
@@ -21,6 +21,6 @@ Text {
 
     font {
         pixelSize: 16
-        underline: is_current && is_dir
+        underline: is_current && is_directory
     }
 }

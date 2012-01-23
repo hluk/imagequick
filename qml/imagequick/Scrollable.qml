@@ -9,10 +9,64 @@ ListView {
     highlightMoveDuration: scroll_duration
 
     function scroll(x, y) {
-        if ( x && (x < 0 || !horizontal || !atXEnd) )
-            contentX = Math.max(0, contentX+x);
-        if ( y && (y < 0 || horizontal || !atYEnd) )
-            contentY = Math.max(0, contentY+y);
+        var err, index;
+        err = 4;
+        if (x < 0) {
+            if (!horizontal) {
+                contentX = Math.max(contentX+x, 0);
+            } else if ( indexAt(contentX-err, 0) !== currentIndex ) {
+                previous();
+                contentY = 0;
+                if (currentItem.x < contentX) {
+                    contentX = currentItem.x +
+                            Math.max(0, currentItem.width - width);
+                }
+            } else if (!atXBeginning) {
+                contentX += x;
+            }
+        } else if (x > 0) {
+            if (!horizontal) {
+                if (currentItem.x + currentItem.width > contentX + width + err)
+                    contentX = Math.min(contentX+x, currentItem.x + currentItem.width - width);
+            } else if ( indexAt(contentX + width + err, 0) !== currentIndex ) {
+                next();
+                contentY = 0;
+                if (currentItem.x + currentItem.width > contentX + width) {
+                    contentX = currentItem.x -
+                            Math.max(0, width - currentItem.width);
+                }
+            } else if (!atXEnd) {
+                contentX += x;
+            }
+        }
+
+        if (y < 0) {
+            if (horizontal) {
+                contentY = Math.max(contentY+y, 0);
+            } else if ( indexAt(0, contentY-err) !== currentIndex ) {
+                previous();
+                if (currentItem.y < contentY) {
+                    contentY = currentItem.y +
+                            Math.max(0, currentItem.height - height);
+                }
+            } else if (!atYBeginning) {
+                contentY += y;
+            }
+        } else if (y > 0) {
+            if (horizontal) {
+                if (currentItem.y + currentItem.height > contentY + height + err)
+                    contentY = Math.min(contentY+y, currentItem.y + currentItem.height - height);
+            } else if ( indexAt(0, contentY + height + err) !== currentIndex ) {
+                next();
+                contentX = 0;
+                if (currentItem.y + currentItem.height > contentY + height) {
+                    contentY = currentItem.y -
+                            Math.max(0, height - currentItem.height);
+                }
+            } else if (!atYEnd) {
+                contentY += y;
+            }
+        }
     }
 
     Behavior on contentX {

@@ -15,18 +15,28 @@ Scrollable {
         return model.isFolder(index);
     }
 
+    function select(index) {
+        if (count >= 0) {
+            if (index < count)
+                currentIndex = index;
+            History.pop();
+            History.push(index);
+        }
+    }
+
     function back() {
         /* show multiple items or go to parent folder*/
-        if (one)
+        if (one) {
             one = false;
-        else
+        } else {
+            History.pop();
             view.model.folder = view.model.parentFolder;
+        }
     }
 
     function forward() {
         /* enter folder or show single image */
         if ( currentItem.is_directory ) {
-            History.push(currentIndex);
             History.push(0);
             model.folder = currentItem.path;
             filter = "";
@@ -41,23 +51,19 @@ Scrollable {
     function next() {
         /* focus next visible item */
         var i = currentIndex;
-        while(currentIndex+1 < count) {
+        incrementCurrentIndex();
+        while(currentItem.is_hidden && currentIndex+1 < count)
             incrementCurrentIndex();
-            if (!currentItem.is_hidden)
-                return;
-        }
-        currentIndex = i;
+        select(currentItem.is_hidden ? i : currentIndex);
     }
 
     function previous() {
         /* focus previous visible item */
         var i = currentIndex;
-        while(currentIndex > 0) {
-            decrementCurrentIndex()
-            if (!currentItem.is_hidden)
-                return;
-        }
-        currentIndex = i;
+        decrementCurrentIndex();
+        while(currentItem.is_hidden && currentIndex > 0)
+            decrementCurrentIndex();
+        select(currentItem.is_hidden ? i : currentIndex);
     }
 
     state: "FIT"
@@ -71,8 +77,8 @@ Scrollable {
 
     model: FolderListModel {
         id: model
-        folder: src
         sortField: FolderListModel.Name
+        folder: src
         //nameFilters: [ "*.JPG", "*.jpg", "*.PNG", "*.png" ]
         //showDirs: false
     }
@@ -83,10 +89,11 @@ Scrollable {
 
     onCountChanged:  {
         var current = History.pop();
-        if (current < count)
-            currentIndex = current;
-        else
+        if (current >= 0) {
+            if (current < count)
+                currentIndex = current;
             History.push(current);
+        }
     }
 
     onOrientationChanged: {

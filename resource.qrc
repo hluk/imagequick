@@ -7,5 +7,6 @@
         <file>qml/imagequick/Scrollable.qml</file>
         <file>qml/imagequick/Search.qml</file>
         <file>qml/imagequick/History.js</file>
+        <file>qml/imagequick/Storage.js</file>
     </qresource>
 </RCC>

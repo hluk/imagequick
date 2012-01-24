@@ -1,7 +1,6 @@
 #include <QtGui/QApplication>
 #include <QVariant>
 #include <QDir>
-#include <QDebug>
 #include <QDeclarativeContext>
 #include "qmlapplicationviewer.h"
 

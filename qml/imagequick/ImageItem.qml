@@ -6,7 +6,7 @@ Item {
 
     property string path: filePath
     property string filename: fileName
-    property bool is_directory: isDirectory(index >= 0 ? index : currentIndex)
+    property bool is_directory: index >= 0 ? isDirectory(index) : true
     property bool is_image: image.status !== Image.Error
     property bool is_loaded: image.status === Image.Ready
     property bool is_current: ListView.isCurrentItem

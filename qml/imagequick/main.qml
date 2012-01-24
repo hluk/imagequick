@@ -1,4 +1,5 @@
 import QtQuick 1.1
+import "Storage.js" as Storage
 
 Rectangle {
     id: page
@@ -23,8 +24,47 @@ Rectangle {
 
     property int scroll_amount: 200
 
-    function toggle(dest, arg1, arg2) {
-        dest = (dest === arg1) ? arg2 : arg1;
+    function quit() {
+        Qt.quit();
+    }
+
+    function restoreSession() {
+        var current, path, val;
+
+        path = Storage.getSetting(src+"-path");
+        if (path)
+            view.model.folder = path;
+
+        current = parseInt( Storage.getSetting(src+"-current") );
+        if (current >= 0)
+            view.select(current);
+
+        val = Storage.getSetting(src+"-horizontal");
+        horizontal = val !== "false";
+
+        val = parseFloat(Storage.getSetting(src+"-zoom"));
+        if (val)
+            view.zoom = val;
+
+        val = Storage.getSetting(src+"-filter");
+        if (val !== undefined)
+            filter = val;
+
+        val = Storage.getSetting(src+"-state");
+        if (val !== undefined)
+            view.state = val;
+    }
+
+    function saveSession() {
+        var date = new Date();
+        Storage.initialize();
+        Storage.setSetting(src+"-current", view.currentIndex);
+        Storage.setSetting(src+"-path", view.model.folder);
+        Storage.setSetting(src+"-last-access", date.toISOString());
+        Storage.setSetting(src+"-horizontal", horizontal);
+        Storage.setSetting(src+"-state", view.state);
+        Storage.setSetting(src+"-zoom", view.zoom);
+        Storage.setSetting(src+"-filter", filter);
     }
 
     function search() {
@@ -40,6 +80,16 @@ Rectangle {
         id: view
         width: page.width
         height: page.height
+
+        /* restore session */
+        Component.onCompleted: {
+            restoreSession();
+        }
+
+        /* save session */
+        Component.onDestruction: {
+            saveSession();
+        }
     }
 
     /* search box */
@@ -90,7 +140,7 @@ Rectangle {
         } else if (k === Qt.Key_O) {
             horizontal = !horizontal
         } else if (k === Qt.Key_Q || k === Qt.Key_Escape) {
-            Qt.quit();
+            quit();
         } else if (k === Qt.Key_W) {
             view.zoom = 1.0;
             view.state = "FIT-TO-WIDTH";
@@ -105,10 +155,10 @@ Rectangle {
         } else if (k === Qt.Key_Down) {
             view.scroll(0, scroll_amount)
         } else if (k === Qt.Key_Home) {
-            view.currentIndex = 0;
+            view.select(0);
             view.positionViewAtBeginning()
         } else if (k === Qt.Key_End) {
-            view.currentIndex = view.count-1;
+            view.select(view.count-1);
             view.positionViewAtEnd()
         } else if (k === Qt.Key_PageDown) {
             view.scroll(0, view.height-scroll_amount)

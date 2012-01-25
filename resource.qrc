@@ -8,5 +8,6 @@
         <file>qml/imagequick/Search.qml</file>
         <file>qml/imagequick/History.js</file>
         <file>qml/imagequick/Storage.js</file>
+        <file>qml/imagequick/Picture.qml</file>
     </qresource>
 </RCC>

@@ -32,8 +32,7 @@ Rectangle {
         var current, path, val;
 
         path = Storage.getSetting(src+"-path");
-        if (path)
-            view.model.folder = path;
+        view.setDirectory(path || src);
 
         current = parseInt( Storage.getSetting(src+"-current") );
         if (current >= 0)
@@ -58,7 +57,7 @@ Rectangle {
     function saveSession() {
         var date = new Date();
         Storage.initialize();
-        Storage.setSetting(src+"-current", view.currentIndex);
+        Storage.setSetting(src+"-current", view.current());
         Storage.setSetting(src+"-path", view.model.folder);
         Storage.setSetting(src+"-last-access", date.toISOString());
         Storage.setSetting(src+"-horizontal", horizontal);
@@ -78,8 +77,7 @@ Rectangle {
     /* main view */
     ImageView {
         id: view
-        width: page.width
-        height: page.height
+        anchors.fill: parent
 
         /* restore session */
         Component.onCompleted: {
@@ -102,7 +100,7 @@ Rectangle {
         onClosed: {
             if (view.currentItem.is_hidden) {
                 view.next();
-                if (view.currentItem.hidden)
+                if (view.currentItem.is_hidden)
                     view.previous();
             }
         }

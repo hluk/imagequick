@@ -24,9 +24,12 @@ function getSetting(setting) {
     var res, db;
     db = getDatabase();
     db.transaction(function(tx) {
-                       var rs = tx.executeSql('SELECT value FROM settings WHERE setting=?;', [setting]);
-                       if (rs.rows.length > 0) {
-                           res = rs.rows.item(0).value;
+                       try {
+                           var rs = tx.executeSql('SELECT value FROM settings WHERE setting=?;', [setting]);
+                           if (rs.rows.length > 0) {
+                               res = rs.rows.item(0).value;
+                           }
+                       } catch(err) {
                        }
                    })
     return res

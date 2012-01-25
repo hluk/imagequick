@@ -1,7 +1,7 @@
 var _history = [];
 
 function last() {
-    return _history[_history.length-1];
+    return _history[_history.length-1] || 0;
 }
 
 function set(item) {

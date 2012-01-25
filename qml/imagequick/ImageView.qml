@@ -8,17 +8,36 @@ Scrollable {
 
     property real zoom: 1.0
     property bool one: false
-    property FolderListModel file_model: null
+    property FolderListModel new_file_model: null
+    property XmlListModel new_xml_model: null
 
     flickableDirection: Flickable.HorizontalAndVerticalFlick
 
-    function setDirectory(path) {
-        file_model = model_component.createObject(view, {folder: path});
+    function source() {
+        return new_file_model ?
+                    new_file_model.folder :
+                    new_xml_model ?
+                        new_xml_model.source :
+                        undefined;
+    }
+
+    function isLocal(path) {
+        return new String(path).slice(0, 7) === "file://";
+    }
+
+    function setSource(path) {
+        if ( isLocal(path) ) {
+            new_xml_model = null;
+            new_file_model = file_model_component.createObject(view, {folder: path});
+        } else {
+            new_file_model = null;
+            new_xml_model = xml_model_component.createObject(view, {source: path});
+        }
         new_model_timer.start();
     }
 
     function isDirectory(index) {
-        return model.isFolder(index);
+        return new_file_model !== null && model.isFolder(index);
     }
 
     function select(index) {
@@ -35,8 +54,11 @@ Scrollable {
         if (one) {
             one = false;
         } else {
-            History.pop();
-            setDirectory(view.model.parentFolder);
+            console.log(History._history);
+            if (new_file_model) {
+                History.pop();
+                setSource(view.model.parentFolder);
+            }
         }
     }
 
@@ -44,7 +66,7 @@ Scrollable {
         /* enter folder or show single image */
         if ( currentItem.is_directory() ) {
             History.push(0);
-            setDirectory(currentItem.path);
+            setSource( currentItem.path() );
             filter = "";
         } else {
             if (currentItem.is_image) {
@@ -89,24 +111,46 @@ Scrollable {
     Timer {
         id: new_model_timer
         interval: 100; running:false; repeat: false
-        onTriggered: model = file_model
+        onTriggered: model = new_file_model || new_xml_model
     }
     Component {
-        id: model_component
+        id: file_model_component
         FolderListModel {
-            id: folder_model
+            id: file_model
             sortField: FolderListModel.Name
+        }
+    }
+    Component {
+        id: xml_model_component
+        XmlListModel {
+            id: xml_model
+            query: "/rss/channel/item"
+            namespaceDeclarations: "declare namespace media=\"http://search.yahoo.com/mrss/\";"
+
+            XmlRole { name: "itemTitle"; query: "title/string()" }
+            /* filePath is last thumbnail */
+            XmlRole { name: "filePath"; query: "(*|.)/media:thumbnail[last()]/@url/string()" }
+            /* filePathBig is last content (maybe bigger image) */
+            XmlRole { name: "filePathBig"; query: "(*|.)/media:content[last()]/@url/string()" }
+            XmlRole { name: "itemWidth"; query: "(*|.)/media:content[last()]/@width/string()" }
+            XmlRole { name: "itemHeight"; query: "(*|.)/media:content[last()]/@height/string()" }
         }
     }
 
     /* delegate */
+    property string fileName: ""
+    property string filePath: ""
+    property string filePathBig: ""
+    property string itemTitle: ""
+    property int itemWidth: 0
+    property int itemHeight: 0
     delegate: ImageItem {
-        property string _filename: fileName
-        property string _path: filePath
-
-        function path() { return _path; }
-        function filename() { return _filename; }
+        function path(hires) { return hires && filePathBig || filePath || ""; }
+        function filename() { return fileName || filePath || ""; }
+        function item_title() { return itemTitle || ""; }
         function item_index() { return index; }
+        function item_width() { return new_xml_model ? itemWidth : 0; }
+        function item_height() { return new_xml_model ? itemHeight : 0; }
         function is_directory() { return isDirectory(index); }
         property bool is_current: ListView.isCurrentItem
         property bool is_hidden: !isMatched(filename(), filter)

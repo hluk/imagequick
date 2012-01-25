@@ -2,7 +2,6 @@
 import QtQuick 1.1
 
 Rectangle {
-    id: search_box
     color: "white"
     width: 320
     height: edit.height+10
@@ -13,9 +12,12 @@ Rectangle {
     smooth: true
     opacity: 0
 
-    signal search(string text)
+    signal changed(string text)
+    signal submit(string text)
     signal closed()
+
     property alias text: edit.text
+    property alias label: editlabel.text
 
     function close() {
         opacity = 0;
@@ -27,6 +29,30 @@ Rectangle {
     function show() {
         opacity = 1;
         edit.focus = true;
+        edit.selectAll();
+    }
+
+    function accept() {
+        if (timer.running) {
+            changed(text);
+            timer.stop();
+        }
+        submit(text);
+        close();
+    }
+
+    function reject() {
+        if (timer.running) {
+            changed(text);
+            timer.stop();
+        }
+        close();
+        edit.text = "";
+    }
+
+    function copyAll() {
+        edit.selectAll();
+        edit.copy();
     }
 
     Behavior on opacity {
@@ -37,8 +63,7 @@ Rectangle {
     }
 
     Text {
-        id: label
-        text: "Filter:"
+        id: editlabel
         anchors.left: parent.left
         anchors.margins: 10
         anchors.verticalCenter: parent.verticalCenter
@@ -49,12 +74,21 @@ Rectangle {
 
     TextInput {
         id: edit
-        anchors.left: label.right
-        anchors.right: parent.right
-        anchors.margins: 10
-        anchors.verticalCenter: parent.verticalCenter
+
+        anchors {
+            left: editlabel.right
+            right: parent.right
+            leftMargin: 10
+            rightMargin: 10
+            verticalCenter: parent.verticalCenter
+        }
+        cursorVisible: true
+        color: "#151515"
+        selectionColor: "Green"
+
         font {
             pixelSize: 16
+            bold: true
         }
         onTextChanged: {
             timer.running = true
@@ -64,23 +98,16 @@ Rectangle {
             interval: 500
             running: false
             repeat: false
-            onTriggered: search(text)
+            onTriggered: changed(text)
         }
     }
 
-    Keys.onReturnPressed: {
-        search(text);
-        close();
-        event.accepted = true;
-    }
-    Keys.onEnterPressed: {
-        search(text);
-        close();
-        event.accepted = true;
-    }
-    Keys.onEscapePressed: {
-        search("");
-        close();
-        event.accepted = true;
+    Keys.forwardTo: [returnKey, edit]
+    Item {
+        id: returnKey
+        Keys.onReturnPressed: accept()
+        Keys.onEnterPressed:  accept()
+        Keys.onEscapePressed: reject()
+        Keys.onPressed: event.accepted = true
     }
 }

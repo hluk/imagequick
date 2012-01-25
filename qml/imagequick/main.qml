@@ -29,41 +29,52 @@ Rectangle {
     }
 
     function restoreSession() {
-        var current, path, val;
+        var current, path, val, db;
 
-        path = Storage.getSetting(src+"-path");
-        view.setDirectory(path || src);
+        db = Storage.getDatabase(src);
 
-        current = parseInt( Storage.getSetting(src+"-current") );
+        path = Storage.getSetting(db, "path");
+        view.setSource(path || src);
+
+        current = parseInt( Storage.getSetting(db, "current") );
         if (current >= 0)
             view.select(current);
 
-        val = Storage.getSetting(src+"-horizontal");
+        val = Storage.getSetting(db, "horizontal");
         horizontal = val !== "false";
 
-        val = parseFloat(Storage.getSetting(src+"-zoom"));
+        val = parseFloat(Storage.getSetting(db, "zoom"));
         if (val)
             view.zoom = val;
 
-        val = Storage.getSetting(src+"-filter");
+        val = Storage.getSetting(db, "filter");
         if (val !== undefined)
             filter = val;
 
-        val = Storage.getSetting(src+"-state");
+        val = Storage.getSetting(db, "state");
         if (val !== undefined)
             view.state = val;
+
+        val = Storage.getSetting(db, "one");
+        view.one = val === "true";
     }
 
     function saveSession() {
-        var date = new Date();
-        Storage.initialize();
-        Storage.setSetting(src+"-current", view.current());
-        Storage.setSetting(src+"-path", view.model.folder);
-        Storage.setSetting(src+"-last-access", date.toISOString());
-        Storage.setSetting(src+"-horizontal", horizontal);
-        Storage.setSetting(src+"-state", view.state);
-        Storage.setSetting(src+"-zoom", view.zoom);
-        Storage.setSetting(src+"-filter", filter);
+        var date, d, db;
+        date = new Date();
+        d = {};
+        d["current"] = view.current();
+        d["path"] = view.source();
+        d["last-access"] = date.toISOString();
+        d["horizontal"] = horizontal;
+        d["state"] = view.state;
+        d["one"] = view.one;
+        d["zoom"] = view.zoom;
+        d["filter"] = filter;
+
+        db = Storage.getDatabase(src);
+        Storage.initialize(db);
+        Storage.setSettings(db, d);
     }
 
     function search() {
@@ -91,19 +102,27 @@ Rectangle {
     }
 
     /* search box */
-    Search {
+    EditBox {
         id: search_edit
         text: filter
-        onSearch: {
+        label: "Filter:"
+        onChanged: {
             filter = text.toLowerCase();
         }
-        onClosed: {
+        onSubmit: {
+            filter = text.toLowerCase();
             if (view.currentItem.is_hidden) {
                 view.next();
                 if (view.currentItem.is_hidden)
                     view.previous();
             }
         }
+    }
+
+    /* url edit box */
+    EditBox {
+        id: copy_edit
+        label: "URL:"
     }
 
     /* keyboard */
@@ -126,7 +145,11 @@ Rectangle {
 
         event.accepted = true;
 
-        if ( k === Qt.Key_Apostrophe || (ctrl && k === Qt.Key_F) ) {
+        if (k === Qt.Key_C) {
+            copy_edit.text = view.currentItem.path();
+            copy_edit.show();
+            copy_edit.copyAll();
+        } else if ( k === Qt.Key_Apostrophe || (ctrl && k === Qt.Key_F) ) {
             search();
         } else if (k === Qt.Key_H) {
             view.zoom = 1.0;

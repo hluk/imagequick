@@ -3,14 +3,13 @@ import QtQuick 1.1
 
 AnimatedImage {
     id: image
-    source: (is_hidden || is_directory()) ? "" : path()
+    source: ((is_hidden || is_directory()) && status !== Image.Ready) ? "" : path(one)
     anchors.centerIn: parent
 
     property real izoom: 1.0
 
-    width:  (image.status === Image.Ready) ? (implicitWidth  * izoom * zoom) : 0
-    height: (image.status === Image.Ready) ? (implicitHeight * izoom * zoom) : 0
-    fillMode: Image.PreserveAspectFit
+    width:  implicitWidth  * izoom * zoom
+    height: implicitHeight * izoom * zoom
     smooth: true
 
     Behavior on izoom {

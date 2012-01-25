@@ -2,18 +2,18 @@
 import QtQuick 1.1
 
 Item {
-    width:  image.status === Image.Loading ? view.width  : label_text.width+40
-    height: image.status === Image.Loading ? view.height : label_text.width+10
+    width:  label_text.width+40
+    height: label_text.width+10
     Text {
         id: label_text
         anchors.horizontalCenter: parent.horizontalCenter
         visible: !one || image.status !== Image.Ready
         color: is_current ? color_current : is_directory() ? color_directory : is_image ? color_image : color_other
-        text: "<strong>" + filename() + "</strong>" +
+        text: "<strong>" + (item_title() || filename()) + "</strong>" +
               (image.status === Image.Loading ?
-                   parseInt(100*image.progress)+"% loaded" :
+                   "<br /><small>"+parseInt(100*image.progress)+"% loaded</small>" :
                    (image.status === Image.Ready ?
-                        "<br /><small>"+image.implicitWidth+"x"+image.implicitHeight+"</small>" :
+                        "<br /><small>"+(item_width()||image.implicitWidth)+"x"+(item_height()||image.implicitHeight)+"</small>" :
                         ""))
 
         style: Text.Outline

@@ -5,9 +5,9 @@
         <file>qml/imagequick/ImageView.qml</file>
         <file>qml/imagequick/main.qml</file>
         <file>qml/imagequick/Scrollable.qml</file>
-        <file>qml/imagequick/Search.qml</file>
         <file>qml/imagequick/History.js</file>
         <file>qml/imagequick/Storage.js</file>
         <file>qml/imagequick/Picture.qml</file>
+        <file>qml/imagequick/EditBox.qml</file>
     </qresource>
 </RCC>

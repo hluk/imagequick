@@ -10,7 +10,17 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     QmlApplicationViewer viewer;
 
-    QVariant src( argc > 1 ? "file://" + QDir(argv[1]).absolutePath() : QDir::currentPath() );
+    /* set source path from arguments or current path */
+    QVariant src;
+    if (argc > 1) {
+        QDir dir(argv[1]);
+        if ( dir.exists() )
+            src = "file://" + dir.absolutePath();
+        else
+            src = argv[1];
+    } else {
+        src = QDir::currentPath();
+    }
     viewer.rootContext()->setContextProperty("src", src);
 
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);

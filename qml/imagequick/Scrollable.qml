@@ -7,7 +7,6 @@ ListView {
     orientation: horizontal ? ListView.Horizontal : ListView.Vertical
     highlightResizeDuration: scroll_duration
     highlightMoveDuration: scroll_duration
-    //cacheBuffer: 1920
 
     function scroll(x, y) {
         var err, index;

@@ -13,7 +13,8 @@ Rectangle {
     opacity: 0
 
     signal changed(string text)
-    signal submit(string text)
+    signal accepted(string text)
+    signal rejected()
     signal closed()
 
     property alias text: edit.text
@@ -37,7 +38,7 @@ Rectangle {
             changed(text);
             timer.stop();
         }
-        submit(text);
+        accepted(text);
         close();
     }
 
@@ -46,6 +47,7 @@ Rectangle {
             changed(text);
             timer.stop();
         }
+        rejected();
         close();
         edit.text = "";
     }

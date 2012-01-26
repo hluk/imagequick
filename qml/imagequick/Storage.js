@@ -1,5 +1,5 @@
 function getDatabase(id) {
-    return [id, openDatabaseSync("ImageQuick", "1.0", "StorageDatabase", 100000)];
+    return [id ? id + "-" : "", openDatabaseSync("ImageQuick", "1.0", "StorageDatabase", 100000)];
 }
 
 function initialize(db) {
@@ -15,7 +15,7 @@ function setSettings(db, settings) {
     for (setting in settings) {
         db[1].transaction(function(tx) {
                            var rs = tx.executeSql('INSERT OR REPLACE INTO settings VALUES (?,?);',
-                                                  [db[0] + "-" + setting, settings[setting]]);
+                                                  [db[0] + setting, settings[setting]]);
                            res = rs.rowsAffected > 0;
                        });
     }
@@ -26,7 +26,7 @@ function getSetting(db, setting) {
     var res;
     db[1].transaction(function(tx) {
                        try {
-                           var rs = tx.executeSql('SELECT value FROM settings WHERE setting=?;', [db[0]+"-"+setting]);
+                           var rs = tx.executeSql('SELECT value FROM settings WHERE setting=?;', [db[0] + setting]);
                            if (rs.rows.length > 0) {
                                res = rs.rows.item(0).value;
                            }

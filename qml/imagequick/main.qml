@@ -10,6 +10,8 @@ Rectangle {
 
     property bool horizontal: true
     property string filter: ""
+    property string single: filename
+    property bool one: filename !== ""
 
     /* colors */
     property color color_current: "yellow"
@@ -29,9 +31,14 @@ Rectangle {
     }
 
     function restoreSession() {
-        var current, path, val, db;
+        var current, path, filters, val, db;
 
-        db = Storage.getDatabase(src);
+        if (!session) {
+            view.setSource(src);
+            return;
+        };
+
+        db = Storage.getDatabase(session);
 
         path = Storage.getSetting(db, "path");
         view.setSource(path || src);
@@ -41,7 +48,8 @@ Rectangle {
             view.select(current);
 
         val = Storage.getSetting(db, "horizontal");
-        horizontal = val !== "false";
+        if (val)
+            horizontal = val !== "false";
 
         val = parseFloat(Storage.getSetting(db, "zoom"));
         if (val)
@@ -56,23 +64,26 @@ Rectangle {
             view.state = val;
 
         val = Storage.getSetting(db, "one");
-        view.one = val === "true";
+        if (val)
+            one = val === "true";
     }
 
     function saveSession() {
-        var date, d, db;
-        date = new Date();
+        var d, db;
+
+        if (!session) return;
+
         d = {};
         d["current"] = view.current();
         d["path"] = view.source();
-        d["last-access"] = date.toISOString();
+        d["last-access"] = new Date().toISOString();
         d["horizontal"] = horizontal;
         d["state"] = view.state;
         d["one"] = view.one;
         d["zoom"] = view.zoom;
         d["filter"] = filter;
 
-        db = Storage.getDatabase(src);
+        db = Storage.getDatabase(session);
         Storage.initialize(db);
         Storage.setSettings(db, d);
     }
@@ -109,13 +120,16 @@ Rectangle {
         onChanged: {
             filter = text.toLowerCase();
         }
-        onSubmit: {
+        onAccepted: {
             filter = text.toLowerCase();
             if (view.currentItem.is_hidden) {
                 view.next();
                 if (view.currentItem.is_hidden)
                     view.previous();
             }
+        }
+        onRejected: {
+            filter = "";
         }
     }
 
@@ -146,7 +160,7 @@ Rectangle {
         event.accepted = true;
 
         if (k === Qt.Key_C) {
-            copy_edit.text = view.currentItem.path();
+            copy_edit.text = view.currentItem.path(true);
             copy_edit.show();
             copy_edit.copyAll();
         } else if ( k === Qt.Key_Apostrophe || (ctrl && k === Qt.Key_F) ) {

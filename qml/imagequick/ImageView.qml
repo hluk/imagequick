@@ -7,7 +7,6 @@ Scrollable {
     id: view
 
     property real zoom: 1.0
-    property bool one: false
     property FolderListModel new_file_model: null
     property XmlListModel new_xml_model: null
 
@@ -53,9 +52,11 @@ Scrollable {
         /* show multiple items or go to parent folder*/
         if (one) {
             one = false;
+            single = "";
         } else {
-            console.log(History._history);
-            if (new_file_model) {
+            if (filter) {
+                filter = "";
+            } else if (new_file_model) {
                 History.pop();
                 setSource(view.model.parentFolder);
             }
@@ -71,6 +72,7 @@ Scrollable {
         } else {
             if (currentItem.is_image) {
                 one = !one;
+                single = "";
                 positionViewAtIndex(currentIndex, ListView.Contain);
             }
         }
@@ -111,13 +113,23 @@ Scrollable {
     Timer {
         id: new_model_timer
         interval: 100; running:false; repeat: false
-        onTriggered: model = new_file_model || new_xml_model
+        onTriggered: {
+            if (new_file_model) {
+                model = new_file_model;
+                cacheBuffer = 0;
+            } else {
+                model = new_xml_model;
+                cacheBuffer = 4096;
+            }
+        }
     }
     Component {
         id: file_model_component
         FolderListModel {
             id: file_model
             sortField: FolderListModel.Name
+            showDirs: single === ""
+            nameFilters: single ? [single] : []
         }
     }
     Component {

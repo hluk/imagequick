@@ -3,7 +3,7 @@ import QtQuick 1.1
 
 Item {
     width:  label_text.width+40
-    height: label_text.width+10
+    height: label_text.height+10
     Text {
         id: label_text
         anchors.horizontalCenter: parent.horizontalCenter

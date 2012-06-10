@@ -29,6 +29,7 @@ Shortcuts
 * **Backspace**: show all items (disable filter) or go to parent directory
 * **C**: copy URL
 * **Escape, Q**: exit
+* **A, Z**: sharpen/unsharpen image
 
 Examples
 --------

@@ -1,5 +1,6 @@
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
+import Qt.labs.shaders 1.0
 
 Item {
     id: item
@@ -35,6 +36,46 @@ Item {
 
     Picture {
         id: image
+    }
+
+    ShaderEffectItem {
+        id: shaderSharpen
+        property variant tex: ShaderEffectSource {
+            sourceItem: image
+            hideSource: true
+        }
+        property real w: 1.0/image.width
+        property real h: 1.0/image.height
+        property real strength: sharpenStrength
+        anchors.fill: image
+        blending: false;
+        visible: strength > 0.0
+
+        fragmentShader: "
+            varying highp vec2 qt_TexCoord0;
+            uniform sampler2D tex;
+            uniform highp float w;
+            uniform highp float h;
+            uniform highp float strength;
+
+            void main(void)
+            {
+                vec2 xy = qt_TexCoord0.xy;
+                vec4 col = 9.0 * texture2D(tex, xy);
+
+                col -= texture2D(tex, xy + vec2(-w, h));
+                col -= texture2D(tex, xy + vec2(0.0, h));
+                col -= texture2D(tex, xy + vec2(w, h));
+                col -= texture2D(tex, xy + vec2(-w, 0.0));
+
+                col -= texture2D(tex, xy + vec2(w, 0.0));
+                col -= texture2D(tex, xy + vec2(0.0, -h));
+                col -= texture2D(tex, xy + vec2(w, -h));
+                col -= texture2D(tex, xy + vec2(-w, -h));
+                col = col * strength + (1.0 - strength) * texture2D(tex, xy);
+                gl_FragColor = col;
+            }
+            "
     }
 
     ImageLabel {

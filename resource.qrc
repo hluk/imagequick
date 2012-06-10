@@ -9,5 +9,6 @@
         <file>qml/imagequick/Storage.js</file>
         <file>qml/imagequick/Picture.qml</file>
         <file>qml/imagequick/EditBox.qml</file>
+        <file>qml/imagequick/Osd.qml</file>
     </qresource>
 </RCC>

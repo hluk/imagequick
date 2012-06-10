@@ -41,7 +41,7 @@ Rectangle {
         db = Storage.getDatabase(session);
 
         path = Storage.getSetting(db, "path");
-        view.setSource(path || src);
+        view.setSource(src || path || currentPath);
 
         current = parseInt( Storage.getSetting(db, "current") );
         if (current >= 0)
@@ -66,6 +66,10 @@ Rectangle {
         val = Storage.getSetting(db, "one");
         if (val)
             one = val === "true";
+
+        val = parseFloat(Storage.getSetting(db, "sharpen"));
+        if (val)
+            view.sharpenStrength = val;
     }
 
     function saveSession() {
@@ -82,6 +86,7 @@ Rectangle {
         d["one"] = view.one;
         d["zoom"] = view.zoom;
         d["filter"] = filter;
+        d["sharpen"] = view.sharpenStrength;
 
         db = Storage.getDatabase(session);
         Storage.initialize(db);
@@ -159,7 +164,11 @@ Rectangle {
 
         event.accepted = true;
 
-        if (k === Qt.Key_C) {
+        if (k === Qt.Key_A) {
+            view.sharpenStrength = Math.min(1.0, view.sharpenStrength + 0.05);
+        } else if (k === Qt.Key_Z) {
+            view.sharpenStrength = Math.max(0.0, view.sharpenStrength - 0.05);
+        } else if (k === Qt.Key_C) {
             copy_edit.text = view.currentItem.path(true);
             copy_edit.show();
             copy_edit.copyAll();
@@ -176,6 +185,8 @@ Rectangle {
             horizontal = !horizontal
         } else if (k === Qt.Key_Q || k === Qt.Key_Escape) {
             quit();
+        } else if ( (ctrl && k === Qt.Key_R) || k === Qt.Key_F5 ) {
+            view.reload();
         } else if (k === Qt.Key_W) {
             view.zoom = 1.0;
             view.state = "FIT-TO-WIDTH";

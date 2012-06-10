@@ -9,6 +9,7 @@ Scrollable {
     property real zoom: 1.0
     property FolderListModel new_file_model: null
     property XmlListModel new_xml_model: null
+    property real sharpenStrength: 0.0
 
     flickableDirection: Flickable.HorizontalAndVerticalFlick
 
@@ -100,6 +101,13 @@ Scrollable {
         select(currentItem.is_hidden ? i : currentIndex);
     }
 
+    function reload() {
+        if (new_xml_model)
+            model.reload();
+        else
+            setSource(model.folder);
+    }
+
     state: "FIT"
 
     Behavior on zoom {
@@ -169,41 +177,19 @@ Scrollable {
     }
 
     /* progress */
-    Text {
+    Osd {
         id: progress
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: 6
-        color: "white"
-        style: Text.Outline
-        styleColor: "black"
         text: (currentIndex+1) + "/" + count
-        opacity: 0
+    }
 
-        font {
-            pixelSize: 18
-            bold: true
-        }
-
-        Behavior on text {
-            SequentialAnimation {
-                id: progress_animation
-                running: false
-                NumberAnimation {
-                    target: progress
-                    property: "opacity"
-                    to: 0.7
-                    duration: 500
-                }
-                NumberAnimation {
-                    target: progress
-                    property: "opacity"
-                    to: 0.0
-                    duration: 4000
-                    easing.type: Easing.InQuint
-                }
-            }
-        }
+    /* sharpen label */
+    Osd {
+        id: labelSharpen
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        text: "sharpen: " + Math.round(sharpenStrength*100) + " %"
     }
 
     onCountChanged: {

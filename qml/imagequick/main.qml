@@ -101,6 +101,10 @@ Rectangle {
         return fileName.toLowerCase().indexOf(filter) !== -1;
     }
 
+    function showHelp() {
+        help_popup.show();
+    }
+
     /* main view */
     ImageView {
         id: view
@@ -142,6 +146,11 @@ Rectangle {
     EditBox {
         id: copy_edit
         label: "URL:"
+    }
+
+    /* search box */
+    Help {
+        id: help_popup
     }
 
     /* keyboard */
@@ -227,6 +236,8 @@ Rectangle {
             view.state = "FIT";
         } else if (k === Qt.Key_Backspace) {
             view.back();
+        } else if (k === Qt.Key_Question || k === Qt.Key_F1) {
+            showHelp();
         } else {
             event.accepted = false;
         }

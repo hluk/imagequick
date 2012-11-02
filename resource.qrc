@@ -10,5 +10,7 @@
         <file>qml/imagequick/Picture.qml</file>
         <file>qml/imagequick/EditBox.qml</file>
         <file>qml/imagequick/Osd.qml</file>
+        <file>qml/imagequick/Help.qml</file>
+        <file>qml/imagequick/HelpItem.qml</file>
     </qresource>
 </RCC>

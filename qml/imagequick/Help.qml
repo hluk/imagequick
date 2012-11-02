@@ -14,16 +14,13 @@ Rectangle {
 
     Column {
         id: help
-        spacing: 6
+        spacing: 2
         anchors.centerIn: parent
 
-        HelpItem {
-            label: qsTr("F1 ?")
-            help: qsTr("This popup")
-        }
+        HelpItem { label: qsTr("Navigation") }
         HelpItem {
             label: qsTr("Arrow Keys")
-            help: qsTr("Navigation")
+            help: qsTr("Movement")
         }
         HelpItem {
             label: qsTr("Home End")
@@ -38,28 +35,26 @@ Rectangle {
             help: qsTr("Scroll Down")
         }
         HelpItem {
-            label: qsTr("A Z")
-            help: qsTr("Sharpen/Unsharpen")
-        }
-        HelpItem {
-            label: qsTr("Ctrl+D Ctrl+L")
-            help: qsTr("Go to URL")
-        }
-        HelpItem {
-            label: qsTr("Ctrl+F '")
-            help: qsTr("Filter Items")
-        }
-        HelpItem {
-            label: qsTr("H W")
-            help: qsTr("Fit to Height/Width")
-        }
-        HelpItem {
             label: qsTr("J N")
             help: qsTr("Next Item")
         }
         HelpItem {
             label: qsTr("K P B Shift+N")
             help: qsTr("Previous Item")
+        }
+        HelpItem {
+            label: qsTr("Ctrl+D Ctrl+L")
+            help: qsTr("Go to URL")
+        }
+
+        HelpItem { label: qsTr("General") }
+        HelpItem {
+            label: qsTr("F1 ?")
+            help: qsTr("Help")
+        }
+        HelpItem {
+            label: qsTr("Ctrl+F '")
+            help: qsTr("Filter Items")
         }
         HelpItem {
             label: qsTr("O")
@@ -75,12 +70,14 @@ Rectangle {
         }
         HelpItem {
             label: qsTr("Enter")
-            help: qsTr("Forward")
+            help: qsTr("Select")
         }
         HelpItem {
             label: qsTr("Backspace")
             help: qsTr("Back")
         }
+
+        HelpItem { label: qsTr("Effects") }
         HelpItem {
             label: qsTr("+ -")
             help: qsTr("Zoom In/Out")
@@ -88,6 +85,14 @@ Rectangle {
         HelpItem {
             label: qsTr(". /")
             help: qsTr("Zoom to Fill/Fit")
+        }
+        HelpItem {
+            label: qsTr("H W")
+            help: qsTr("Fit to Height/Width")
+        }
+        HelpItem {
+            label: qsTr("A Z")
+            help: qsTr("Sharpen/Unsharpen")
         }
     }
 

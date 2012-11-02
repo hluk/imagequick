@@ -4,22 +4,28 @@ Row {
     property alias label: labelText.text
     property alias help: helpText.text
 
+    property bool isHeader: help === ""
+
+    anchors.horizontalCenter: parent.horizontalCenter
+
     Text {
         id: labelText
-        color: "#333"
-        font.bold: true
-        font.pointSize: 12
+        color: isHeader ? "#666" : "#333"
+        font {
+            bold: true
+            pointSize: isHeader ? 14 : 12
+        }
     }
 
     Text {
         text: "  ...  "
+        opacity: isHeader ? 0 : 1
         color: "black"
         font.pointSize: 12
     }
 
     Text {
         id: helpText
-        text: help
         color: "black"
         font.pointSize: 12
     }

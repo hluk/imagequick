@@ -42,8 +42,8 @@ Rectangle {
             help: qsTr("Sharpen/Unsharpen")
         }
         HelpItem {
-            label: qsTr("C")
-            help: qsTr("Copy File Name")
+            label: qsTr("Ctrl+D Ctrl+L")
+            help: qsTr("Go to URL")
         }
         HelpItem {
             label: qsTr("Ctrl+F '")

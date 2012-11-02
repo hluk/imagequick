@@ -144,8 +144,11 @@ Rectangle {
 
     /* url edit box */
     EditBox {
-        id: copy_edit
+        id: url_edit
         label: "URL:"
+        onAccepted: {
+            view.goTo(text);
+        }
     }
 
     /* search box */
@@ -177,10 +180,9 @@ Rectangle {
             view.sharpenStrength = Math.min(1.0, view.sharpenStrength + 0.05);
         } else if (k === Qt.Key_Z) {
             view.sharpenStrength = Math.max(0.0, view.sharpenStrength - 0.05);
-        } else if (k === Qt.Key_C) {
-            copy_edit.text = view.currentItem.path(true);
-            copy_edit.show();
-            copy_edit.copyAll();
+        } else if (ctrl && (k === Qt.Key_D || k === Qt.Key_L)) {
+            url_edit.text = view.currentItem.path(true);
+            url_edit.show();
         } else if ( k === Qt.Key_Apostrophe || (ctrl && k === Qt.Key_F) ) {
             search();
         } else if (k === Qt.Key_H) {

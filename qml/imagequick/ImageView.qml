@@ -36,6 +36,12 @@ Scrollable {
         new_model_timer.start();
     }
 
+    function goTo(path) {
+        History.push(0);
+        setSource(path);
+        filter = "";
+    }
+
     function isDirectory(index) {
         return new_file_model !== null && model.isFolder(index);
     }
@@ -67,9 +73,7 @@ Scrollable {
     function forward() {
         /* enter folder or show single image */
         if ( currentItem.is_directory() ) {
-            History.push(0);
-            setSource( currentItem.path() );
-            filter = "";
+            goTo( currentItem.path() );
         } else {
             if (currentItem.is_image) {
                 one = !one;

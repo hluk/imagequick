@@ -66,11 +66,13 @@ Rectangle {
 
     Text {
         id: editlabel
+        color: "#444"
         anchors.left: parent.left
         anchors.margins: 10
         anchors.verticalCenter: parent.verticalCenter
         font {
             pixelSize: 16
+            bold: true
         }
     }
 
@@ -90,7 +92,6 @@ Rectangle {
 
         font {
             pixelSize: 16
-            bold: true
         }
         onTextChanged: {
             timer.running = true

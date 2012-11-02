@@ -11,6 +11,7 @@ AnimatedImage {
     width:  implicitWidth  * izoom * zoom
     height: implicitHeight * izoom * zoom
     smooth: true
+    asynchronous: true
 
     Behavior on izoom {
         NumberAnimation {

@@ -2,7 +2,7 @@ import QtQuick 1.1
 
 AnimatedImage {
     id: image
-    source: ((is_hidden || is_directory()) && status !== Image.Ready) ? "" : path(one)
+    source: ((isHidden || isDirectory()) && status !== Image.Ready) ? "" : path(one)
     anchors.centerIn: parent
 
     property real izoom: 1.0

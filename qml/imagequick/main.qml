@@ -14,17 +14,17 @@ Rectangle {
     property bool one: filename !== ""
 
     /* colors */
-    property color color_current: "yellow"
-    property color color_image: "white"
-    property color color_directory: "#9df"
-    property color color_other: "gray"
+    property color colorCurrent: "yellow"
+    property color colorImage: "white"
+    property color colorDirectory: "#9df"
+    property color colorOther: "gray"
 
     /* animation properties */
-    property int scroll_duration: 100
-    property int zoom_duration: 250
-    property int show_duration: 300
+    property int scrollDuration: 100
+    property int zoomDuration: 250
+    property int showDuration: 300
 
-    property int scroll_amount: 200
+    property int scrollAmount: 200
 
     function quit() {
         Qt.quit();
@@ -94,7 +94,7 @@ Rectangle {
     }
 
     function search() {
-        search_edit.show();
+        searchEdit.show();
     }
 
     function isMatched(fileName, filter) {
@@ -102,7 +102,7 @@ Rectangle {
     }
 
     function showHelp() {
-        help_popup.show();
+        helpPopup.show();
     }
 
     /* main view */
@@ -123,7 +123,7 @@ Rectangle {
 
     /* search box */
     EditBox {
-        id: search_edit
+        id: searchEdit
         text: filter
         label: "Filter:"
         onChanged: {
@@ -131,9 +131,9 @@ Rectangle {
         }
         onAccepted: {
             filter = text.toLowerCase();
-            if (view.currentItem.is_hidden) {
+            if (view.currentItem.isHidden) {
                 view.next();
-                if (view.currentItem.is_hidden)
+                if (view.currentItem.isHidden)
                     view.previous();
             }
         }
@@ -144,7 +144,7 @@ Rectangle {
 
     /* url edit box */
     EditBox {
-        id: url_edit
+        id: urlEdit
         label: "URL:"
         onAccepted: {
             view.goTo(text);
@@ -153,7 +153,7 @@ Rectangle {
 
     /* search box */
     Help {
-        id: help_popup
+        id: helpPopup
     }
 
     /* keyboard */
@@ -181,8 +181,8 @@ Rectangle {
         } else if (k === Qt.Key_Z) {
             view.sharpenStrength = Math.max(0.0, view.sharpenStrength - 0.05);
         } else if (ctrl && (k === Qt.Key_D || k === Qt.Key_L)) {
-            url_edit.text = view.currentItem.path(true);
-            url_edit.show();
+            urlEdit.text = view.currentItem.path(true);
+            urlEdit.show();
         } else if ( k === Qt.Key_Apostrophe || (ctrl && k === Qt.Key_F) ) {
             search();
         } else if (k === Qt.Key_H) {
@@ -204,13 +204,13 @@ Rectangle {
         } else if (k === Qt.Key_Enter || k === Qt.Key_Return) {
             view.forward()
         } else if (k === Qt.Key_Right) {
-            view.scroll(scroll_amount, 0)
+            view.scroll(scrollAmount, 0)
         } else if (k === Qt.Key_Left) {
-            view.scroll(-scroll_amount, 0)
+            view.scroll(-scrollAmount, 0)
         } else if (k === Qt.Key_Up) {
-            view.scroll(0, -scroll_amount)
+            view.scroll(0, -scrollAmount)
         } else if (k === Qt.Key_Down) {
-            view.scroll(0, scroll_amount)
+            view.scroll(0, scrollAmount)
         } else if (k === Qt.Key_Home) {
             view.select(0);
             view.positionViewAtBeginning()
@@ -218,9 +218,9 @@ Rectangle {
             view.select(view.count-1);
             view.positionViewAtEnd()
         } else if (k === Qt.Key_PageDown) {
-            view.scroll(0, view.height-scroll_amount)
+            view.scroll(0, view.height-scrollAmount)
         } else if (k === Qt.Key_PageUp) {
-            view.scroll(0, -view.height+scroll_amount)
+            view.scroll(0, -view.height+scrollAmount)
         } else if (k === Qt.Key_Space) {
             if (horizontal)
                 view.scroll( (shift ? -1 : 1) * (view.width-100), 0 )

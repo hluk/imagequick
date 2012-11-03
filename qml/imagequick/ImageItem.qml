@@ -4,9 +4,9 @@ import Qt.labs.shaders 1.0
 Item {
     id: item
 
-    property bool is_image: image.status !== Image.Error
+    property bool isImage: image.status !== Image.Error
 
-    opacity: is_hidden ? 0.0 : 1.0
+    opacity: isHidden ? 0.0 : 1.0
     scale: opacity
 
     width:  opacity *
@@ -18,17 +18,17 @@ Item {
 
     Behavior on opacity {
         NumberAnimation {
-            duration: show_duration
+            duration: showDuration
         }
     }
 
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            select(item_index)
+            select(itemIndex)
         }
         onDoubleClicked: {
-            select(item_index)
+            select(itemIndex)
             forward()
         }
     }

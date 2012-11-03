@@ -6,17 +6,17 @@ Scrollable {
     id: view
 
     property real zoom: 1.0
-    property FolderListModel new_file_model: null
-    property XmlListModel new_xml_model: null
+    property FolderListModel newFileModel: null
+    property XmlListModel newXmlModel: null
     property real sharpenStrength: 0.0
 
     flickableDirection: Flickable.HorizontalAndVerticalFlick
 
     function source() {
-        return new_file_model ?
-                    new_file_model.folder :
-                    new_xml_model ?
-                        new_xml_model.source :
+        return newFileModel ?
+                    newFileModel.folder :
+                    newXmlModel ?
+                        newXmlModel.source :
                         undefined;
     }
 
@@ -26,13 +26,13 @@ Scrollable {
 
     function setSource(path) {
         if ( isLocal(path) ) {
-            new_xml_model = null;
-            new_file_model = file_model_component.createObject(view, {folder: path});
+            newXmlModel = null;
+            newFileModel = fileModelComponent.createObject(view, {folder: path});
         } else {
-            new_file_model = null;
-            new_xml_model = xml_model_component.createObject(view, {source: path});
+            newFileModel = null;
+            newXmlModel = xmlModelComponent.createObject(view, {source: path});
         }
-        new_model_timer.start();
+        newModelTimer.start();
     }
 
     function goTo(path) {
@@ -41,8 +41,8 @@ Scrollable {
         filter = "";
     }
 
-    function isDirectory(index) {
-        return new_file_model !== null && model.isFolder(index);
+    function isItemDirectory(index) {
+        return newFileModel !== null && model.isFolder(index);
     }
 
     function select(index) {
@@ -62,7 +62,7 @@ Scrollable {
         } else {
             if (filter) {
                 filter = "";
-            } else if (new_file_model) {
+            } else if (newFileModel) {
                 History.pop();
                 setSource(view.model.parentFolder);
             }
@@ -71,10 +71,10 @@ Scrollable {
 
     function forward() {
         /* enter folder or show single image */
-        if ( currentItem.is_directory() ) {
+        if ( currentItem.isDirectory() ) {
             goTo( currentItem.path() );
         } else {
-            if (currentItem.is_image) {
+            if (currentItem.isImage) {
                 one = !one;
                 single = "";
                 positionViewAtIndex(currentIndex, ListView.Contain);
@@ -87,10 +87,10 @@ Scrollable {
         var i = currentIndex;
         while(currentIndex+1 < count) {
             incrementCurrentIndex();
-            if (!currentItem.is_hidden)
+            if (!currentItem.isHidden)
                 break;
         }
-        select(currentItem.is_hidden ? i : currentIndex);
+        select(currentItem.isHidden ? i : currentIndex);
     }
 
     function previous() {
@@ -98,14 +98,14 @@ Scrollable {
         var i = currentIndex;
         while(currentIndex > 0) {
             decrementCurrentIndex();
-            if (!currentItem.is_hidden)
+            if (!currentItem.isHidden)
                 break;
         }
-        select(currentItem.is_hidden ? i : currentIndex);
+        select(currentItem.isHidden ? i : currentIndex);
     }
 
     function reload() {
-        if (new_xml_model)
+        if (newXmlModel)
             model.reload();
         else
             setSource(model.folder);
@@ -115,38 +115,38 @@ Scrollable {
 
     Behavior on zoom {
         NumberAnimation {
-            duration: zoom_duration
+            duration: zoomDuration
             easing.type: Easing.OutQuad;
         }
     }
 
     /* model */
     Timer {
-        id: new_model_timer
+        id: newModelTimer
         interval: 100; running:false; repeat: false
         onTriggered: {
-            if (new_file_model) {
-                model = new_file_model;
+            if (newFileModel) {
+                model = newFileModel;
                 cacheBuffer = 0;
             } else {
-                model = new_xml_model;
+                model = newXmlModel;
                 cacheBuffer = 4096;
             }
         }
     }
     Component {
-        id: file_model_component
+        id: fileModelComponent
         FolderListModel {
-            id: file_model
+            id: fileModel
             sortField: FolderListModel.Name
             showDirs: single === ""
             nameFilters: single ? [single] : []
         }
     }
     Component {
-        id: xml_model_component
+        id: xmlModelComponent
         XmlListModel {
-            id: xml_model
+            id: xmlModel
             query: "/rss/channel/item"
             namespaceDeclarations: "declare namespace media=\"http://search.yahoo.com/mrss/\";"
 
@@ -164,19 +164,19 @@ Scrollable {
     property string fileName: ""
     property string filePath: ""
     property string filePathBig: ""
-    property string itemTitle: ""
+    property string title: ""
     property int itemWidth: 0
     property int itemHeight: 0
     delegate: ImageItem {
         function path(hires) { return hires && filePathBig || filePath || ""; }
         function filename() { return fileName || filePath || ""; }
-        function item_title() { return itemTitle || ""; }
-        function item_index() { return index; }
-        function item_width() { return new_xml_model ? itemWidth : 0; }
-        function item_height() { return new_xml_model ? itemHeight : 0; }
-        function is_directory() { return isDirectory(index); }
-        property bool is_current: ListView.isCurrentItem
-        property bool is_hidden: !isMatched(filename(), filter)
+        function itemTitle() { return title || ""; }
+        function itemIndex() { return index; }
+        function itemWidth() { return newXmlModel ? itemWidth : 0; }
+        function itemHeight() { return newXmlModel ? itemHeight : 0; }
+        function isDirectory() { return isItemDirectory(index); }
+        property bool isCurrent: ListView.isCurrentItem
+        property bool isHidden: !isMatched(filename(), filter)
     }
 
     /* progress */

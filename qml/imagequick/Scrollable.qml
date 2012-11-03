@@ -4,8 +4,8 @@ ListView {
     id: view
 
     orientation: horizontal ? ListView.Horizontal : ListView.Vertical
-    highlightResizeDuration: scroll_duration
-    highlightMoveDuration: scroll_duration
+    highlightResizeDuration: scrollDuration
+    highlightMoveDuration: scrollDuration
 
     function scrollBy(value, xy, wh, moveHorizontally) {
         var err, h, v, size, indexAtFn;
@@ -72,14 +72,14 @@ ListView {
     Behavior on contentX {
         id: behaviorContextX
         NumberAnimation {
-            duration: scroll_duration
+            duration: scrollDuration
             easing.type: Easing.OutQuad;
         }
     }
     Behavior on contentY {
         id: behaviorContextY
         NumberAnimation {
-            duration: scroll_duration
+            duration: scrollDuration
             easing.type: Easing.OutQuad;
         }
     }

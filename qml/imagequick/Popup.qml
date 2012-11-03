@@ -29,7 +29,7 @@ Rectangle {
 
     Behavior on opacity {
         PropertyAnimation {
-            duration: show_duration
+            duration: showDuration
             easing.type: Easing.InOutQuad;
         }
     }

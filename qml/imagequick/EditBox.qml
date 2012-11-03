@@ -1,37 +1,16 @@
-// import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
 
-Rectangle {
+Popup {
     color: "white"
     width: 320
     height: edit.height+10
-    anchors.centerIn: parent
-    radius: 6
-    border.color: "black"
-    border.width: 2
-    smooth: true
-    opacity: 0
 
     signal changed(string text)
     signal accepted(string text)
     signal rejected()
-    signal closed()
 
     property alias text: edit.text
     property alias label: editlabel.text
-
-    function close() {
-        opacity = 0;
-        focus = false;
-        parent.focus = true;
-        closed();
-    }
-
-    function show() {
-        opacity = 1;
-        edit.focus = true;
-        edit.selectAll();
-    }
 
     function accept() {
         if (timer.running) {
@@ -55,13 +34,6 @@ Rectangle {
     function copyAll() {
         edit.selectAll();
         edit.copy();
-    }
-
-    Behavior on opacity {
-        PropertyAnimation {
-            duration: show_duration
-            easing.type: Easing.InOutQuad;
-        }
     }
 
     Text {
@@ -103,6 +75,11 @@ Rectangle {
             repeat: false
             onTriggered: changed(text)
         }
+    }
+
+    onShown: {
+        edit.focus = true;
+        edit.selectAll();
     }
 
     Keys.forwardTo: [returnKey, edit]

@@ -1,4 +1,3 @@
-// import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
 
 ListView {
@@ -8,75 +7,80 @@ ListView {
     highlightResizeDuration: scroll_duration
     highlightMoveDuration: scroll_duration
 
-    function scroll(x, y) {
-        var err, index;
+    function scrollBy(value, xy, wh, moveHorizontally) {
+        var err, h, v, size, indexAtFn;
+
         err = 4;
-        if (x < 0) {
-            if (!horizontal) {
-                contentX = Math.max(contentX+x, 0);
-            } else if ( indexAt(contentX-err, 0) !== currentIndex ) {
-                previous();
-                contentY = 0;
-                if (currentItem.x < contentX) {
-                    contentX = currentItem.x +
-                            Math.max(0, currentItem.width - width);
-                }
-            } else if (!atXBeginning) {
-                contentX += x;
-            }
-        } else if (x > 0) {
-            if (!horizontal) {
-                if (currentItem.x + currentItem.width > contentX + width + err)
-                    contentX = Math.min(contentX+x, currentItem.x + currentItem.width - width);
-            } else if ( indexAt(contentX + width + err, 0) !== currentIndex ) {
-                next();
-                contentY = 0;
-                if (currentItem.x + currentItem.width > contentX + width) {
-                    contentX = currentItem.x -
-                            Math.max(0, width - currentItem.width);
-                }
-            } else if (!atXEnd) {
-                contentX += x;
-            }
+        if (moveHorizontally) {
+            h = "contentX";
+            v = "contentY";
+            size = width;
+            indexAtFn = indexAt;
+        } else {
+            h = "contentY";
+            v = "contentX";
+            size = height;
+            indexAtFn = function(y, x) { return indexAt(x, y); };
         }
 
-        if (y < 0) {
-            if (horizontal) {
-                contentY = Math.max(contentY+y, 0);
-            } else if ( indexAt(0, contentY-err) !== currentIndex ) {
+        if (value < 0) {
+            if (moveHorizontally !== horizontal) {
+                view[h] = Math.max(view[h] + value, 0);
+            } else if ( indexAtFn(view[h] - err, 0) !== currentIndex ) {
                 previous();
-                if (currentItem.y < contentY) {
-                    contentY = currentItem.y +
-                            Math.max(0, currentItem.height - height);
+                view[v] = 0;
+                if (currentItem[xy] < view[h]) {
+                    view[h] = currentItem[xy] + Math.max(0, currentItem[wh] - size);
                 }
-            } else if (!atYBeginning) {
-                contentY += y;
+            } else if (moveHorizontally ? !atXBeginning : !atYBeginning) {
+                view[h] += value;
             }
-        } else if (y > 0) {
-            if (horizontal) {
-                if (currentItem.y + currentItem.height > contentY + height + err)
-                    contentY = Math.min(contentY+y, currentItem.y + currentItem.height - height);
-            } else if ( indexAt(0, contentY + height + err) !== currentIndex ) {
+        } else if (value > 0) {
+            if (moveHorizontally !== horizontal) {
+                if (currentItem[xy] + currentItem[wh] > view[h] + size + err)
+                    view[h] = Math.min(view[h] + value, currentItem[xy] + currentItem[wh] - size);
+            } else if ( indexAtFn(view[h] + size + err, 0) !== currentIndex ) {
                 next();
-                contentX = 0;
-                if (currentItem.y + currentItem.height > contentY + height) {
-                    contentY = currentItem.y -
-                            Math.max(0, height - currentItem.height);
+                view[v] = 0;
+                if (currentItem[xy] + currentItem[wh] > view[h] + size) {
+                    view[h] = currentItem[xy] - Math.max(0, size - currentItem[wh]);
                 }
-            } else if (!atYEnd) {
-                contentY += y;
+            } else if (moveHorizontally ? !atXEnd : !atYEnd) {
+                view[h] += value;
             }
         }
+    }
+
+    function scroll(x, y) {
+        scrollBy(x, "x", "width", true);
+        scrollBy(y, "y", "height", false);
     }
 
     function updateScroll() {
         var index = indexAt(contentX + width/2, contentY + height/2);
         if (index !== -1 && index !== currentIndex) {
+            behaviorContextX.enabled = behaviorContextY.enabled = false;
             var x = contentX;
             var y = contentY;
             currentIndex = index;
             contentX = x;
             contentY = y;
+            behaviorContextX.enabled = behaviorContextY.enabled = true;
+        }
+    }
+
+    Behavior on contentX {
+        id: behaviorContextX
+        NumberAnimation {
+            duration: scroll_duration
+            easing.type: Easing.OutQuad;
+        }
+    }
+    Behavior on contentY {
+        id: behaviorContextY
+        NumberAnimation {
+            duration: scroll_duration
+            easing.type: Easing.OutQuad;
         }
     }
 

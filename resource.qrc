@@ -12,5 +12,6 @@
         <file>qml/imagequick/Osd.qml</file>
         <file>qml/imagequick/Help.qml</file>
         <file>qml/imagequick/HelpItem.qml</file>
+        <file>qml/imagequick/Popup.qml</file>
     </qresource>
 </RCC>

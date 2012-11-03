@@ -1,16 +1,9 @@
 import QtQuick 1.1
 
-Rectangle {
+Popup {
     width: help.width + 16
     height: help.height + 16
-    anchors.centerIn: parent
-    color: "#ddd"
-    border.color: "#333"
-    border.width: 2
-    radius: 6
-    smooth: true
-
-    opacity: 0
+    popupOpacity: 0.8
 
     Column {
         id: help
@@ -94,17 +87,6 @@ Rectangle {
             label: qsTr("A Z")
             help: qsTr("Sharpen/Unsharpen")
         }
-    }
-
-    function close() {
-        opacity = 0;
-        focus = false;
-        parent.focus = true;
-    }
-
-    function show() {
-        opacity = 0.9;
-        focus = true;
     }
 
     Keys.onPressed: {

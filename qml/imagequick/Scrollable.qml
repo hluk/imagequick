@@ -69,16 +69,17 @@ ListView {
         }
     }
 
-    Behavior on contentX {
-        NumberAnimation {
-            duration: scroll_duration
-            easing.type: Easing.OutQuad;
+    function updateScroll() {
+        var index = indexAt(contentX + width/2, contentY + height/2);
+        if (index !== -1 && index !== currentIndex) {
+            var x = contentX;
+            var y = contentY;
+            currentIndex = index;
+            contentX = x;
+            contentY = y;
         }
     }
-    Behavior on contentY {
-        NumberAnimation {
-            duration: scroll_duration
-            easing.type: Easing.OutQuad;
-        }
-    }
+
+    onFlickEnded: updateScroll()
+    onMovementEnded: updateScroll()
 }

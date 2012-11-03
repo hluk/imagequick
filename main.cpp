@@ -1,5 +1,4 @@
 #include <QtGui/QApplication>
-#include <QVariant>
 #include <QDir>
 #include <QFile>
 #include <QDeclarativeContext>
@@ -7,58 +6,62 @@
 #include <iostream>
 #include "qmlapplicationviewer.h"
 
-static void print_help(const char *cmd)
+#define VERSION "0.1.0"
+
+using std::endl;
+
+static void printHelp(const char *cmd)
 {
-    std::cout << "Usage:" << std::endl
-              << cmd << " [filename|directory|url]" << std::endl
-              << "  Opens image or directory or images in Atom/RSS feed." << std::endl
-              << cmd << " -S<session_name> [filename|directory|url]" << std::endl
-              << "  Restores/saves session <session_name>." << std::endl;
+    std::cout << "Usage:" << endl
+              << "  " << cmd << " [filename|directory|url]" << endl
+              << "    Opens image or directory or images in Atom/RSS feed." << endl
+              << "  " << cmd << " -S<session> [filename|directory|url]" << endl
+              << "    Restores/saves session <session>." << endl
+              << endl
+              << "ImageQuick v" VERSION << " (hluk@email.cz)" << endl;
 }
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
+    // Create Qt GUI application.
     QScopedPointer<QApplication> app(createApplication(argc, argv));
 
-    QmlApplicationViewer viewer;
-    QDeclarativeContext *content = viewer.rootContext();
-
-    /* OpenGL viewport */
-    viewer.setViewport(new QGLWidget);
-    viewer.setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
-    /* get arguments */
+    // Parse command line arguments.
     QString src, session, filename;
-    bool session_next = false, filename_next = false;
+    bool sessionNext = false, filenameNext = false;
     QStringList args = QApplication::arguments();
     for(int i = 1; i < args.length(); ++i) {
         const QString &arg = args.at(i);
-        if ( session_next ) {
+        if ( sessionNext ) {
             session = arg;
-            session_next = false;
-            filename_next = true;
-        } else if ( !filename_next && session.isEmpty() && arg.startsWith("-s", Qt::CaseInsensitive) ) {
+            sessionNext = false;
+            filenameNext = true;
+        } else if ( !filenameNext && session.isEmpty() && arg.startsWith("-s", Qt::CaseInsensitive) ) {
             if (arg.length() == 2)
-                session_next = true;
+                sessionNext = true;
             else {
                 session = arg.right( arg.length()-2 );
             }
-            filename_next = true;
-        } else if ( !filename_next &&
+            filenameNext = true;
+        } else if ( !filenameNext &&
                     (arg == QString("-") || arg == QString("--")) ) {
-            filename_next = true;
-        } else if ( !filename_next &&
+            filenameNext = true;
+        } else if ( !filenameNext &&
                     (arg == QString("-h") || arg == QString("--help")) ) {
-            print_help(argv[0]);
+            printHelp(argv[0]);
             return 0;
         } else if ( src.isEmpty() ) {
             src = arg;
         } else {
-            print_help(argv[0]);
+            printHelp(argv[0]);
             return 1;
         }
     }
 
+    QmlApplicationViewer viewer;
+    QDeclarativeContext *content = viewer.rootContext();
+
+    // Browse URL from arguments or current directory.
     if ( src.isEmpty() ) {
         content->setContextProperty( "currentPath", "file://" + QDir::currentPath() );
     } else {
@@ -72,10 +75,16 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
         }
     }
 
+    // Set up properties.
     content->setContextProperty("src", src);
     content->setContextProperty("session", session);
     content->setContextProperty("filename", filename);
 
+    // Create OpenGL viewport.
+    viewer.setViewport(new QGLWidget);
+    viewer.setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+
+    // Set up viewer.
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setSource(QUrl("qrc:/qml/qml/imagequick/main.qml"));
     viewer.showFullScreen();

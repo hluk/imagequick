@@ -3,7 +3,7 @@ import QtQuick 1.1
 Popup {
     width: help.width + 16
     height: help.height + 16
-    popupOpacity: 0.8
+    popupOpacity: 0.9
 
     Column {
         id: help

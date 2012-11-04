@@ -1,6 +1,7 @@
 #include <QtGui/QApplication>
 #include <QDir>
 #include <QFile>
+#include <QIcon>
 #include <QDeclarativeContext>
 #include <QGLWidget>
 #include <iostream>
@@ -85,6 +86,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer.setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
     // Set up viewer.
+    viewer.setWindowIcon(QIcon(":images/logo"));
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setSource(QUrl("qrc:/qml/qml/imagequick/main.qml"));
     viewer.showFullScreen();

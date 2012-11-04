@@ -14,4 +14,7 @@
         <file>qml/imagequick/HelpItem.qml</file>
         <file>qml/imagequick/Popup.qml</file>
     </qresource>
+    <qresource prefix="/images">
+        <file alias="logo">images/logo.svg</file>
+    </qresource>
 </RCC>

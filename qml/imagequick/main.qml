@@ -31,7 +31,7 @@ Rectangle {
     }
 
     function restoreSession() {
-        var current, path, filters, val, db;
+        var path, val, db;
 
         if (!session) {
             view.setSource(src);
@@ -43,9 +43,9 @@ Rectangle {
         path = Storage.getSetting(db, "path");
         view.setSource(src || path || currentPath);
 
-        current = parseInt( Storage.getSetting(db, "current") );
-        if (current >= 0)
-            view.select(current);
+        val = parseInt( Storage.getSetting(db, "current") );
+        if (val >= 0)
+            view.select(val);
 
         val = Storage.getSetting(db, "horizontal");
         if (val)
@@ -70,6 +70,10 @@ Rectangle {
         val = parseFloat(Storage.getSetting(db, "sharpen"));
         if (val)
             view.sharpenStrength = val;
+
+        val = Storage.getSetting(db, "history");
+        if (val)
+            view.setHistory(val.split(","));
     }
 
     function saveSession() {
@@ -87,6 +91,7 @@ Rectangle {
         d["zoom"] = view.zoom;
         d["filter"] = filter;
         d["sharpen"] = view.sharpenStrength;
+        d["history"] = String(view.getHistory());
 
         db = Storage.getDatabase(session);
         Storage.initialize(db);

@@ -82,6 +82,14 @@ Scrollable {
         }
     }
 
+    function setHistory(history) {
+        History.setHistory(history);
+    }
+
+    function getHistory() {
+        return History.getHistory();
+    }
+
     function next() {
         /* focus next visible item */
         var i = currentIndex;

@@ -1,5 +1,13 @@
 var _history = [];
 
+function setHistory(history) {
+    _history = history;
+}
+
+function getHistory(history) {
+    return _history;
+}
+
 function last() {
     return _history[_history.length-1] || 0;
 }

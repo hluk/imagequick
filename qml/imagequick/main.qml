@@ -8,7 +8,7 @@ Rectangle {
     color: "black"
     focus: true
 
-    property bool horizontal: true
+    property bool horizontal: false
     property string filter: ""
     property string single: filename
     property bool one: filename !== ""

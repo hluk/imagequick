@@ -62,6 +62,9 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QmlApplicationViewer viewer;
     QDeclarativeContext *content = viewer.rootContext();
 
+    // Make viewer available to QML (to toggle fullscreen).
+    content->setContextProperty("viewer", &viewer);
+
     // Browse URL from arguments or current directory.
     if ( src.isEmpty() ) {
         content->setContextProperty( "currentPath", "file://" + QDir::currentPath() );
@@ -89,7 +92,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer.setWindowIcon(QIcon(":images/logo"));
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setSource(QUrl("qrc:/qml/qml/imagequick/main.qml"));
-    viewer.showFullScreen();
+    viewer.show();
 
     return app->exec();
 }

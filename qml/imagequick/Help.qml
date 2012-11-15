@@ -46,6 +46,10 @@ Popup {
             help: qsTr("Help")
         }
         HelpItem {
+            label: qsTr("F")
+            help: qsTr("Toggle Fullscreen")
+        }
+        HelpItem {
             label: qsTr("Ctrl+F '")
             help: qsTr("Filter Items")
         }

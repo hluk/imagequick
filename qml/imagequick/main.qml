@@ -26,6 +26,8 @@ Rectangle {
 
     property int scrollAmount: 200
 
+    property bool fullscreen: true
+
     function quit() {
         Qt.quit();
     }
@@ -74,6 +76,10 @@ Rectangle {
         val = Storage.getSetting(db, "history");
         if (val)
             view.setHistory(val.split(","));
+
+        val = Storage.getSetting(db, "fullscreen");
+        if (val)
+            fullscreen = val === "true";
     }
 
     function saveSession() {
@@ -92,6 +98,7 @@ Rectangle {
         d["filter"] = filter;
         d["sharpen"] = view.sharpenStrength;
         d["history"] = String(view.getHistory());
+        d["fullscreen"] = fullscreen;
 
         db = Storage.getDatabase(session);
         Storage.initialize(db);
@@ -161,6 +168,17 @@ Rectangle {
         id: helpPopup
     }
 
+    function updateFullscreen() {
+        if (fullscreen) {
+            viewer.showFullScreen();
+        } else {
+            viewer.showNormal();
+        }
+    }
+
+    Component.onCompleted: updateFullscreen()
+    onFullscreenChanged: updateFullscreen()
+
     /* keyboard */
     Keys.onBackPressed: {
         view.back();
@@ -190,6 +208,8 @@ Rectangle {
             urlEdit.show();
         } else if ( k === Qt.Key_Apostrophe || (ctrl && k === Qt.Key_F) ) {
             search();
+        } else if ( k === Qt.Key_F ) {
+            fullscreen = !fullscreen;
         } else if (k === Qt.Key_H) {
             view.zoom = 1.0;
             view.state = "FIT-TO-HEIGHT";

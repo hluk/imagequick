@@ -2,7 +2,7 @@ import QtQuick 1.1
 
 Popup {
     color: "white"
-    width: 320
+    width: row.width + 20
     height: edit.height+10
 
     signal changed(string text)
@@ -36,44 +36,41 @@ Popup {
         edit.copy();
     }
 
-    Text {
-        id: editlabel
-        color: "#444"
-        anchors.left: parent.left
-        anchors.margins: 10
-        anchors.verticalCenter: parent.verticalCenter
-        font {
-            pixelSize: 16
-            bold: true
-        }
-    }
+    Row {
+        id: row
+        anchors.centerIn: parent
+        spacing: 10
 
-    TextInput {
-        id: edit
+        Text {
+            id: editlabel
+            color: "#444"
+            font {
+                pixelSize: 16
+                bold: true
+            }
+        }
 
-        anchors {
-            left: editlabel.right
-            right: parent.right
-            leftMargin: 10
-            rightMargin: 10
-            verticalCenter: parent.verticalCenter
-        }
-        cursorVisible: true
-        color: "#151515"
-        selectionColor: "Green"
+        TextInput {
+            id: edit
+            cursorVisible: true
+            color: "#151515"
+            selectionColor: "Green"
+            width: Math.max(100,
+                            Math.min(implicitWidth, row.parent.parent.width - editlabel.width - 40))
 
-        font {
-            pixelSize: 16
-        }
-        onTextChanged: {
-            timer.running = true
-        }
-        Timer {
-            id: timer
-            interval: 500
-            running: false
-            repeat: false
-            onTriggered: changed(text)
+            font {
+                pixelSize: 16
+            }
+            onTextChanged: {
+                timer.running = true
+            }
+            Timer {
+                id: timer
+                interval: 500
+                running: false
+                repeat: false
+                onTriggered: changed(text)
+            }
         }
     }
 

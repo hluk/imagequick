@@ -9,7 +9,7 @@ Text {
     opacity: 0
 
     font {
-        pixelSize: 18
+        pixelSize: 16
         bold: true
     }
 
@@ -26,7 +26,7 @@ Text {
                 target: osd
                 property: "opacity"
                 to: 0.0
-                duration: 4000
+                duration: 6000
                 easing.type: Easing.InQuint
             }
         }

@@ -203,6 +203,14 @@ Scrollable {
         text: "sharpen: " + Math.round(sharpenStrength*100) + " %"
     }
 
+    /* zoom label */
+    Osd {
+        id: labelZoom
+        anchors.right: parent.right
+        anchors.top: parent.top
+        text: "zoom: " + Math.round(zoom*100) + " %"
+    }
+
     onCountChanged: {
         var last = History.last();
         if (currentIndex !== last && last < count) {

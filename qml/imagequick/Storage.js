@@ -1,5 +1,6 @@
 function getDatabase(id) {
-    return [id ? id + "-" : "", openDatabaseSync("ImageQuick", "1.0", "StorageDatabase", 100000)];
+    return [id ? id + "-" : "",
+            LocalStorage.openDatabaseSync("ImageQuick", "1.0", "StorageDatabase", 100000)];
 }
 
 function initialize(db) {

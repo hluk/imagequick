@@ -1,10 +1,9 @@
-import QtQuick 1.1
+import QtQuick 2.0
+import QtQuick.LocalStorage 2.0
 import "Storage.js" as Storage
 
 Rectangle {
     id: page
-    width: 360
-    height: 360
     color: "black"
     focus: true
 
@@ -28,12 +27,21 @@ Rectangle {
 
     property bool fullscreen: true
 
+    property bool saved: false
+    property bool restored: false
+    property bool selfLoaded: false
+    property bool loaded: selfLoaded && view.loaded
+
     function quit() {
         Qt.quit();
     }
 
     function restoreSession() {
         var path, val, db;
+
+        if (restored || !loaded)
+            return;
+        restored = true;
 
         if (!session) {
             view.setSource(src);
@@ -51,7 +59,7 @@ Rectangle {
 
         val = Storage.getSetting(db, "horizontal");
         if (val)
-            horizontal = val !== "false";
+            horizontal = val !== "false" && val !== "0";
 
         val = parseFloat(Storage.getSetting(db, "zoom"));
         if (val)
@@ -67,7 +75,7 @@ Rectangle {
 
         val = Storage.getSetting(db, "one");
         if (val)
-            one = val === "true";
+            one = val === "true" || val === "1";
 
         val = parseFloat(Storage.getSetting(db, "sharpen"));
         if (val)
@@ -75,17 +83,20 @@ Rectangle {
 
         val = Storage.getSetting(db, "history");
         if (val)
-            view.setHistory(val.split(","));
+            view.setHistory(JSON.parse(val));
 
         val = Storage.getSetting(db, "fullscreen");
         if (val)
-            fullscreen = val === "true";
+            fullscreen = val === "true" || val === "1";
+
+        updateFullscreen()
     }
 
     function saveSession() {
         var d, db;
 
-        if (!session) return;
+        if (!session || saved || !restored) return;
+        saved = true;
 
         d = {};
         d["current"] = view.current();
@@ -97,7 +108,7 @@ Rectangle {
         d["zoom"] = view.zoom;
         d["filter"] = filter;
         d["sharpen"] = view.sharpenStrength;
-        d["history"] = String(view.getHistory());
+        d["history"] = JSON.stringify(view.getHistory());
         d["fullscreen"] = fullscreen;
 
         db = Storage.getDatabase(session);
@@ -121,16 +132,9 @@ Rectangle {
     ImageView {
         id: view
         anchors.fill: parent
-
-        /* restore session */
-        Component.onCompleted: {
-            restoreSession();
-        }
-
-        /* save session */
-        Component.onDestruction: {
-            saveSession();
-        }
+        property bool loaded: false
+        Component.onCompleted: loaded = true
+        Component.onDestruction: saveSession()
     }
 
     /* search box */
@@ -176,7 +180,9 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: updateFullscreen()
+    onLoadedChanged: if (loaded) restoreSession()
+    Component.onCompleted: selfLoaded = true
+    Component.onDestruction: saveSession()
     onFullscreenChanged: updateFullscreen()
 
     /* keyboard */
@@ -204,7 +210,7 @@ Rectangle {
         } else if (k === Qt.Key_Z) {
             view.sharpenStrength = Math.max(0.0, view.sharpenStrength - 0.05);
         } else if (ctrl && (k === Qt.Key_D || k === Qt.Key_L)) {
-            urlEdit.text = view.currentItem.path(true);
+            urlEdit.text = view.currentItem ? view.currentItem.path(true) : "";
             urlEdit.show();
         } else if ( k === Qt.Key_Apostrophe || (ctrl && k === Qt.Key_F) ) {
             search();

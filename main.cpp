@@ -1,11 +1,11 @@
-#include <QtGui/QApplication>
+#include "qtquick2applicationviewer.h"
+
+#include <QtGui/QGuiApplication>
 #include <QDir>
 #include <QFile>
 #include <QIcon>
-#include <QDeclarativeContext>
-#include <QGLWidget>
+#include <QQmlContext>
 #include <iostream>
-#include "qmlapplicationviewer.h"
 
 #define VERSION "0.1.0"
 
@@ -25,12 +25,12 @@ static void printHelp(const char *cmd)
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     // Create Qt GUI application.
-    QScopedPointer<QApplication> app(createApplication(argc, argv));
+    QGuiApplication app(argc, argv);
 
     // Parse command line arguments.
     QString src, session, filename;
     bool sessionNext = false, filenameNext = false;
-    QStringList args = QApplication::arguments();
+    QStringList args = QGuiApplication::arguments();
     for(int i = 1; i < args.length(); ++i) {
         const QString &arg = args.at(i);
         if ( sessionNext ) {
@@ -59,8 +59,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
         }
     }
 
-    QmlApplicationViewer viewer;
-    QDeclarativeContext *content = viewer.rootContext();
+    QtQuick2ApplicationViewer viewer;
+    QQmlContext *content = viewer.rootContext();
 
     // Make viewer available to QML (to toggle fullscreen).
     content->setContextProperty("viewer", &viewer);
@@ -84,15 +84,11 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     content->setContextProperty("session", session);
     content->setContextProperty("filename", filename);
 
-    // Create OpenGL viewport.
-    viewer.setViewport(new QGLWidget);
-    viewer.setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
     // Set up viewer.
-    viewer.setWindowIcon(QIcon(":images/logo"));
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setSource(QUrl("qrc:/qml/qml/imagequick/main.qml"));
+    viewer.setIcon(QIcon(":images/logo"));
+    viewer.resize(360, 360);
     viewer.show();
+    viewer.setSource(QUrl("qrc:/qml/qml/imagequick/main.qml"));
 
-    return app->exec();
+    return app.exec();
 }

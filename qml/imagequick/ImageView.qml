@@ -1,4 +1,5 @@
-import QtQuick 1.1
+import QtQuick 2.0
+import QtQuick.XmlListModel 2.0
 import Qt.labs.folderlistmodel 1.0
 import "History.js" as History
 
@@ -25,6 +26,8 @@ Scrollable {
     }
 
     function setSource(path) {
+        if (new String(path).slice(0, 1) === "/")
+            path = "file://" + path;
         if ( isLocal(path) ) {
             newXmlModel = null;
             newFileModel = fileModelComponent.createObject(view, {folder: path});
@@ -176,7 +179,12 @@ Scrollable {
     property int itemWidth: 0
     property int itemHeight: 0
     delegate: ImageItem {
-        function path(hires) { return hires && filePathBig || filePath || ""; }
+        function path(hires) {
+            var url = hires && filePathBig || filePath || "";
+            if (url.slice(0, 1) === "/")
+                url = "file://" + url;
+            return url;
+        }
         function filename() { return fileName || filePath || ""; }
         function itemTitle() { return title || ""; }
         function itemIndex() { return index; }

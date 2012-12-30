@@ -1,5 +1,5 @@
-import QtQuick 1.1
-import Qt.labs.shaders 1.0
+import QtQuick 2.0
+//import Qt.labs.shaders 1.0
 
 Item {
     id: item
@@ -37,7 +37,7 @@ Item {
         id: image
     }
 
-    ShaderEffectItem {
+    ShaderEffect {
         id: shaderSharpen
         property variant tex: ShaderEffectSource {
             sourceItem: image
@@ -48,7 +48,6 @@ Item {
         property real strength: sharpenStrength
         anchors.fill: image
         blending: false;
-        visible: strength > 0.0
 
         fragmentShader: "
             varying highp vec2 qt_TexCoord0;

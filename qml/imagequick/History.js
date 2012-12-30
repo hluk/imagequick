@@ -1,7 +1,10 @@
 var _history = [];
 
 function setHistory(history) {
-    _history = history;
+    if (history instanceof Array)
+        _history = history;
+    else
+        _history = [];
 }
 
 function getHistory(history) {

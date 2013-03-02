@@ -89,6 +89,22 @@ Rectangle {
         if (val)
             fullscreen = val === "true" || val === "1";
 
+        val = parseInt( Storage.getSetting(db, "width") );
+        if (val > 0)
+            viewer.width = val;
+
+        val = parseInt( Storage.getSetting(db, "height") );
+        if (val > 0)
+            viewer.height = val;
+
+        val = parseInt( Storage.getSetting(db, "x") );
+        if (val >= 0)
+            viewer.x = val;
+
+        val = parseInt( Storage.getSetting(db, "y") );
+        if (val >= 0)
+            viewer.y = val;
+
         updateFullscreen()
     }
 
@@ -110,6 +126,13 @@ Rectangle {
         d["sharpen"] = view.sharpenStrength;
         d["history"] = JSON.stringify(view.getHistory());
         d["fullscreen"] = fullscreen;
+
+        if (!fullscreen) {
+            d["width"] = viewer.width;
+            d["height"] = viewer.height;
+            d["x"] = viewer.x;
+            d["y"] = viewer.y;
+        }
 
         db = Storage.getDatabase(session);
         Storage.initialize(db);

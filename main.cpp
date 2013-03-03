@@ -85,10 +85,17 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     content->setContextProperty("filename", filename);
 
     // Set up viewer.
-    viewer.setIcon(QIcon(":images/logo"));
     viewer.resize(360, 360);
     viewer.show();
+#ifdef IMAGEQUICK_STANDALONE
     viewer.setSource(QUrl("qrc:/qml/qml/imagequick/main.qml"));
+    // FIXME: This doesn't seem to work.
+    viewer.setIcon(QIcon(":logo"));
+#else
+    const QString sharePath = QGuiApplication::applicationDirPath();
+    viewer.setSource(QUrl(sharePath + "/qml/imagequick/main.qml"));
+    viewer.setIcon(QIcon(sharePath + "/images/logo.svg"));
+#endif
 
     return app.exec();
 }

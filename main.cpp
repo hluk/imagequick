@@ -9,6 +9,9 @@
 
 #define VERSION "0.1.0"
 
+#define strx(x) #x
+#define str(x) strx(x)
+
 using std::endl;
 
 static void printHelp(const char *cmd)
@@ -87,14 +90,17 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     // Set up viewer.
     viewer.resize(360, 360);
     viewer.show();
-#ifdef IMAGEQUICK_STANDALONE
-    viewer.setSource(QUrl("qrc:/qml/qml/imagequick/main.qml"));
+#if defined(IMAGEQUICK_STANDALONE)
+    viewer.setSource(QUrl("qrc:/qml/qml/main.qml"));
     // FIXME: This doesn't seem to work.
     viewer.setIcon(QIcon(":logo"));
+#elif defined(INSTALL_PREFIX)
+    viewer.setSource(QUrl(str(INSTALL_PREFIX) "/" str(INSTALL_DATA_PATH) "/qml/main.qml"));
+    viewer.setIcon(QIcon(str(INSTALL_PREFIX) "/" str(INSTALL_ICON_PATH) "/imagequick.svg"));
 #else
     const QString sharePath = QGuiApplication::applicationDirPath();
-    viewer.setSource(QUrl(sharePath + "/qml/imagequick/main.qml"));
-    viewer.setIcon(QIcon(sharePath + "/images/logo.svg"));
+    viewer.setSource(QUrl(sharePath + "/qml/main.qml"));
+    viewer.setIcon(QIcon(sharePath + "/images/imagequick.svg"));
 #endif
 
     return app.exec();

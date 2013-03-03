@@ -1,20 +1,20 @@
 <RCC>
     <qresource prefix="/qml">
-        <file>qml/imagequick/ImageItem.qml</file>
-        <file>qml/imagequick/ImageLabel.qml</file>
-        <file>qml/imagequick/ImageView.qml</file>
-        <file>qml/imagequick/main.qml</file>
-        <file>qml/imagequick/Scrollable.qml</file>
-        <file>qml/imagequick/History.js</file>
-        <file>qml/imagequick/Storage.js</file>
-        <file>qml/imagequick/Picture.qml</file>
-        <file>qml/imagequick/EditBox.qml</file>
-        <file>qml/imagequick/Osd.qml</file>
-        <file>qml/imagequick/Help.qml</file>
-        <file>qml/imagequick/HelpItem.qml</file>
-        <file>qml/imagequick/Popup.qml</file>
+        <file>qml/ImageItem.qml</file>
+        <file>qml/ImageLabel.qml</file>
+        <file>qml/ImageView.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/Scrollable.qml</file>
+        <file>qml/History.js</file>
+        <file>qml/Storage.js</file>
+        <file>qml/Picture.qml</file>
+        <file>qml/EditBox.qml</file>
+        <file>qml/Osd.qml</file>
+        <file>qml/Help.qml</file>
+        <file>qml/HelpItem.qml</file>
+        <file>qml/Popup.qml</file>
     </qresource>
     <qresource prefix="/images">
-        <file alias="logo">images/logo.svg</file>
+        <file alias="logo">images/imagequick.svg</file>
     </qresource>
 </RCC>

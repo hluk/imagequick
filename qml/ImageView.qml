@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.2
 import QtQuick.XmlListModel 2.0
 import Qt.labs.folderlistmodel 1.0
 import "History.js" as History
@@ -41,7 +41,7 @@ Scrollable {
     function goTo(path) {
         History.push(0);
         setSource(path);
-        filter = "";
+        page.filter = "";
     }
 
     function isItemDirectory(index) {
@@ -59,12 +59,12 @@ Scrollable {
 
     function back() {
         /* show multiple items or go to parent folder*/
-        if (one) {
-            one = false;
-            single = "";
+        if (page.one) {
+            page.one = false;
+            page.single = "";
         } else {
-            if (filter) {
-                filter = "";
+            if (page.filter) {
+                page.filter = "";
             } else if (newFileModel) {
                 History.pop();
                 setSource(view.model.parentFolder);
@@ -78,8 +78,8 @@ Scrollable {
             goTo( currentItem.path() );
         } else {
             if (currentItem.isImage) {
-                one = !one;
-                single = "";
+                page.one = !page.one;
+                page.single = "";
                 positionViewAtIndex(currentIndex, ListView.Contain);
             }
         }
@@ -126,7 +126,7 @@ Scrollable {
 
     Behavior on zoom {
         NumberAnimation {
-            duration: zoomDuration
+            duration: page.zoomDuration
             easing.type: Easing.OutQuad;
         }
     }
@@ -150,8 +150,8 @@ Scrollable {
         FolderListModel {
             id: fileModel
             sortField: FolderListModel.Name
-            showDirs: single === ""
-            nameFilters: single ? [single] : []
+            showDirs: page.single === ""
+            nameFilters: page.single ? [page.single] : []
         }
     }
     Component {
@@ -192,7 +192,7 @@ Scrollable {
         function itemHeight() { return newXmlModel ? itemHeight : 0; }
         function isDirectory() { return isItemDirectory(index); }
         property bool isCurrent: ListView.isCurrentItem
-        property bool isHidden: !isMatched(filename(), filter)
+        property bool isHidden: !page.isMatched(filename(), page.filter)
     }
 
     /* progress */

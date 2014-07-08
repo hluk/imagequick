@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.2
 
 Item {
     width:  labelText.width+40
@@ -6,8 +6,8 @@ Item {
     Text {
         id: labelText
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: !one || image.status !== Image.Ready
-        color: isCurrent ? colorCurrent : isDirectory() ? colorDirectory : isImage ? colorImage : colorOther
+        visible: !page.one || image.status !== Image.Ready
+        color: isCurrent ? page.colorCurrent : isDirectory() ? page.colorDirectory : isImage ? page.colorImage : page.colorOther
         text: "<strong>" + (itemTitle() || filename()) + "</strong>" +
               (image.status === Image.Loading ?
                    "<br /><small>"+parseInt(100*image.progress)+"% loaded</small>" :

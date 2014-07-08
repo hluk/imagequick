@@ -1,8 +1,8 @@
-import QtQuick 2.0
+import QtQuick 2.2
 
 AnimatedImage {
     id: image
-    source: ((isHidden || isDirectory()) && status !== Image.Ready) ? "" : path(one)
+    source: ((isHidden || isDirectory()) && status !== Image.Ready) ? "" : path(page.one)
     anchors.centerIn: parent
 
     property real izoom: 1.0

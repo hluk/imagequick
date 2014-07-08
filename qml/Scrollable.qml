@@ -1,11 +1,11 @@
-import QtQuick 2.0
+import QtQuick 2.2
 
 ListView {
     id: view
 
-    orientation: horizontal ? ListView.Horizontal : ListView.Vertical
-    highlightResizeDuration: scrollDuration
-    highlightMoveDuration: scrollDuration
+    orientation: page.horizontal ? ListView.Horizontal : ListView.Vertical
+    highlightResizeDuration: page.scrollDuration
+    highlightMoveDuration: page.scrollDuration
 
     function scrollBy(value, xy, wh, moveHorizontally) {
         var err, h, v, size, indexAtFn;
@@ -24,7 +24,7 @@ ListView {
         }
 
         if (value < 0) {
-            if (moveHorizontally !== horizontal) {
+            if (moveHorizontally !== page.horizontal) {
                 view[h] = Math.max(view[h] + value, 0);
             } else if ( indexAtFn(view[h] - err, 0) !== currentIndex ) {
                 previous();
@@ -36,7 +36,7 @@ ListView {
                 view[h] += value;
             }
         } else if (value > 0) {
-            if (moveHorizontally !== horizontal) {
+            if (moveHorizontally !== page.horizontal) {
                 if (currentItem[xy] + currentItem[wh] > view[h] + size + err)
                     view[h] = Math.min(view[h] + value, currentItem[xy] + currentItem[wh] - size);
             } else if ( indexAtFn(view[h] + size + err, 0) !== currentIndex ) {
@@ -72,14 +72,14 @@ ListView {
     Behavior on contentX {
         id: behaviorContextX
         NumberAnimation {
-            duration: scrollDuration
+            duration: page.scrollDuration
             easing.type: Easing.OutQuad;
         }
     }
     Behavior on contentY {
         id: behaviorContextY
         NumberAnimation {
-            duration: scrollDuration
+            duration: page.scrollDuration
             easing.type: Easing.OutQuad;
         }
     }

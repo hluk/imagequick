@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.2
 
 Rectangle {
     anchors.centerIn: parent
@@ -29,7 +29,7 @@ Rectangle {
 
     Behavior on opacity {
         PropertyAnimation {
-            duration: showDuration
+            duration: page.showDuration
             easing.type: Easing.InOutQuad;
         }
     }

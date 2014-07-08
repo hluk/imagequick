@@ -1,5 +1,4 @@
-import QtQuick 2.0
-//import Qt.labs.shaders 1.0
+import QtQuick 2.2
 
 Item {
     id: item
@@ -11,10 +10,10 @@ Item {
 
     width:  opacity *
             Math.max( image.width, label.width,
-                     ((one || !horizontal) ? view.width : 0) )
+                     ((page.one || !page.horizontal) ? view.width : 0) )
     height: opacity *
             Math.max( image.height, label.height,
-                     ((one || horizontal) ? view.height : 0) )
+                     ((page.one || page.horizontal) ? view.height : 0) )
 
     Behavior on opacity {
         NumberAnimation {

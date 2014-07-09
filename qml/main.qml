@@ -41,6 +41,11 @@ Window {
         property bool selfLoaded: false
         property bool loaded: selfLoaded && view.loaded
 
+        property int lastWindowWidth: 0
+        property int lastWindowHeight: 0
+        property int lastWindowX: 0
+        property int lastWindowY: 0
+
         function quit() {
             close();
             Qt.quit();
@@ -101,19 +106,19 @@ Window {
 
             val = parseInt( Storage.getSetting(db, "width") );
             if (val > 0)
-                window.width = val;
+                lastWindowWidth = window.width = val;
 
             val = parseInt( Storage.getSetting(db, "height") );
             if (val > 0)
-                window.height = val;
+                lastWindowHeight = window.height = val;
 
             val = parseInt( Storage.getSetting(db, "x") );
             if (val >= 0)
-                window.x = val;
+                lastWindowX = window.x = val;
 
             val = parseInt( Storage.getSetting(db, "y") );
             if (val >= 0)
-                window.y = val;
+                lastWindowY = window.y = val;
         }
 
         function saveSession() {
@@ -122,24 +127,22 @@ Window {
             if (!session || saved || !restored) return;
             saved = true;
 
-            d = {};
-            d["current"] = view.current();
-            d["path"] = view.source();
-            d["last-access"] = new Date().toISOString();
-            d["horizontal"] = horizontal;
-            d["state"] = view.state;
-            d["one"] = view.one;
-            d["zoom"] = view.zoom;
-            d["filter"] = filter;
-            d["sharpen"] = view.sharpenStrength;
-            d["history"] = JSON.stringify(view.getHistory());
-            d["fullscreen"] = fullscreen;
-
-            if (!fullscreen) {
-                d["width"] = window.width;
-                d["height"] = window.height;
-                d["x"] = window.x;
-                d["y"] = window.y;
+            d = {
+                "current": view.current(),
+                "path": view.source(),
+                "last-access": new Date().toISOString(),
+                "horizontal": horizontal,
+                "state": view.state,
+                "one": view.one,
+                "zoom": view.zoom,
+                "filter": filter,
+                "sharpen": view.sharpenStrength,
+                "history": JSON.stringify(view.getHistory()),
+                "fullscreen": fullscreen,
+                "width": fullscreen ? lastWindowWidth : window.width,
+                "height": fullscreen ? lastWindowHeight : window.height,
+                "x": fullscreen ? lastWindowX : window.x,
+                "y": fullscreen ? lastWindowY : window.y,
             }
 
             db = Storage.getDatabase(session);
@@ -237,6 +240,12 @@ Window {
             } else if ( k === Qt.Key_Apostrophe || (ctrl && k === Qt.Key_F) ) {
                 search();
             } else if ( k === Qt.Key_F ) {
+                if (!fullscreen) {
+                    lastWindowWidth = window.width;
+                    lastWindowHeight = window.height;
+                    lastWindowX = window.x;
+                    lastWindowY = window.y;
+                }
                 fullscreen = !fullscreen;
             } else if (k === Qt.Key_H) {
                 view.zoom = 1.0;

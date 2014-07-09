@@ -22,11 +22,11 @@ Scrollable {
     }
 
     function isLocal(path) {
-        return new String(path).slice(0, 7) === "file://";
+        return path.slice(0, 7) === "file://";
     }
 
     function setSource(path) {
-        if (new String(path).slice(0, 1) === "/")
+        if (path.slice(0, 1) === "/")
             path = "file://" + path;
         if ( isLocal(path) ) {
             newXmlModel = null;
